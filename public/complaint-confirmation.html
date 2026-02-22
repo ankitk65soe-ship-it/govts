@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Submitted Successfully - Public Service Grievance Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            padding: 40px 40px 30px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .emblem {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .emblem img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .header h1 {
+            color: #1e3a5f;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        /* Success Icon Section */
+        .success-section {
+            text-align: center;
+            padding: 40px 40px 30px;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .success-icon svg {
+            width: 50px;
+            height: 50px;
+            fill: white;
+        }
+
+        .success-title {
+            color: #166534;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .success-message {
+            color: #15803d;
+            font-size: 1rem;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Details Section */
+        .details-section {
+            padding: 40px;
+        }
+
+        .complaint-id-box {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .complaint-id-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .complaint-id-value {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .save-reminder {
+            font-size: 0.85rem;
+            opacity: 0.95;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-item {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .info-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .info-label {
+            color: #64748b;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .info-value {
+            color: #1e293b;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #f59e0b;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .notice-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .notice-title {
+            color: #1e3a5f;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notice-content {
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .notice-content p {
+            margin-bottom: 10px;
+        }
+
+        .notice-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .action-buttons .btn:last-child {
+            grid-column: 1 / -1;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .footer-tagline {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .separator {
+            color: #cbd5e1;
+        }
+
+        .footer-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+
+            .action-buttons {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons .btn:last-child {
+                grid-column: 1;
+            }
+
+            .complaint-id-value {
+                font-size: 1.5rem;
+            }
+
+            .success-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="emblem">
+                <svg viewBox="0 0 24 24" fill="currentColor" style="color: #1e3a5f;">
+                    <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18c-4.41 0-8-3.59-8-8V8.5l8-4.5 8 4.5V12c0 4.41-3.59 8-8 8z"/>
+                    <path d="M10 17l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                </svg>
+            </div>
+            <h1>Public Service Grievance Portal</h1>
+            <p>Government of India</p>
+        </div>
+
+        <!-- Success Section -->
+        <div class="success-section">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                </svg>
+            </div>
+            <h2 class="success-title">Complaint Submitted Successfully!</h2>
+            <p class="success-message">Thank you for raising your concern. Your complaint has been successfully forwarded to the concerned department. We are committed to resolving your issue in a timely and transparent manner.</p>
+        </div>
+
+        <!-- Details Section -->
+        <div class="details-section">
+            <!-- Complaint ID Box -->
+            <div class="complaint-id-box">
+                <form action="https://sheetdb.io/api/v1/0z76h8ewb04ow" id="complaintForm" method="post">
+
+                    <input type="hidden" name="data[Complaint ID]" id="complaintIdField">
+                    <div class="complaint-id-label">Your Complaint ID</div>
+                    <div class="complaint-id-value" id="complaintId">CMP123456</div>
+                    <div class="save-reminder">
+                        <svg viewBox="0 0 24 24" fill="currentColor" style="width: 16px; height: 16px;">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                        Please save this ID for future reference and tracking
+                    </div>
+                /</form>
+            </div>
+
+            <!-- Information Grid -->
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">
+                        <svg class="info-icon" viewBox="0 0 24 24">
+                            <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/>
+                        </svg>
+                        Department Assigned
+                    </div>
+                    <div class="info-value" id="department">Public Works Department</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        <svg class="info-icon" viewBox="0 0 24 24">
+                            <path d="M12 2l-5.5 9h11L12 2zm0 3.84L13.93 9h-3.87L12 5.84zM17.5 13c-2.49 0-4.5 2.01-4.5 4.5s2.01 4.5 4.5 4.5 4.5-2.01 4.5-4.5-2.01-4.5-4.5-4.5zm0 7c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5zM3 21.5h8v-8H3v8zm2-6h4v4H5v-4z"/>
+                        </svg>
+                        Priority
+                    </div>
+                    <div class="info-value" id="category">Medium</div>
+                </div>
+
+                <div class="info-item full-width">
+                    <div class="info-label">
+                        <svg class="info-icon" viewBox="0 0 24 24">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                        </svg>
+                        Complaint Title
+                    </div>
+                    <div class="info-value" id="title">Road Damage Near Main Market</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        <svg class="info-icon" viewBox="0 0 24 24">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        Date & Time Submitted
+                    </div>
+                    <div class="info-value" id="dateTime">Feb 15, 2026 - 10:30 AM</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        <svg class="info-icon" viewBox="0 0 24 24">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                            <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        Expected Resolution Time
+                    </div>
+                    <div class="info-value" id="resolution">5-7 Working Days</div>
+                </div>
+
+                <div class="info-item full-width">
+                    <div class="info-label">
+                        <svg class="info-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        Current Status
+                    </div>
+                    <div class="info-value">
+                        <span class="status-badge">
+                            <span class="status-dot"></span>
+                            Submitted
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notice Box -->
+            <div class="notice-box">
+                <div class="notice-title">
+                    <svg viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px; color: #3b82f6;">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                    </svg>
+                    What Happens Next?
+                </div>
+                <div class="notice-content">
+                    <p>✓ Your complaint has been registered in our system and assigned to the relevant department.</p>
+                    <p>✓ You will receive regular updates via SMS and email regarding the progress of your complaint.</p>
+                    <p>✓ The assigned department will review your complaint and take necessary action within the expected timeframe.</p>
+                    <p>✓ You can track your complaint status anytime using your Complaint ID.</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="#" class="btn btn-primary" onclick="trackComplaint(); return false;">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                    Track Your Complaint
+                </a>
+                <a href="lodge-complaint.html" class="btn btn-secondary">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                    Submit Another Complaint
+                </a>
+                <button class="btn btn-secondary" onclick="window.print()">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/>
+                    </svg>
+                    Print Details
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-tagline">
+            <span>Secure</span>
+            <span class="separator">|</span>
+            <span>Transparent</span>
+            <span class="separator">|</span>
+            <span>Accountable</span>
+        </div>
+
+        <div class="footer-bar"></div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            // Get data from localStorage
+            const complaintId = localStorage.getItem('complaintId') || 'CMP' + Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('complaintIdField').value = complaintId;
+            const department = localStorage.getItem('department') || 'Public Works Department';
+            const category = localStorage.getItem('category') || 'Medium';
+            const title = localStorage.getItem('title') || 'Road Damage Near Main Market';
+            
+            // Set the current date and time
+            const now = new Date();
+            const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            const dateTime = now.toLocaleDateString('en-US', options);
+            
+            // Calculate expected resolution based on priority
+            let resolution = '5-7 Working Days';
+            if (category.toLowerCase() === 'urgent') {
+                resolution = '1-2 Working Days';
+            } else if (category.toLowerCase() === 'high') {
+                resolution = '3-4 Working Days';
+            } else if (category.toLowerCase() === 'low') {
+                resolution = '7-10 Working Days';
+            }
+            
+            // Update the page with actual data
+            document.getElementById('complaintId').textContent = complaintId;
+            document.getElementById('department').textContent = department;
+            document.getElementById('category').textContent = category;
+            document.getElementById('title').textContent = title;
+            document.getElementById('dateTime').textContent = dateTime;
+            document.getElementById('resolution').textContent = resolution;
+            
+            // Clear localStorage after displaying
+            if (localStorage.getItem('complaintId')) {
+                // Store the complaint ID for tracking
+                const savedComplaints = JSON.parse(localStorage.getItem('savedComplaints') || '[]');
+                savedComplaints.push({
+                    id: complaintId,
+                    department: department,
+                    priority: category,
+                    title: title,
+                    date: dateTime,
+                    status: 'Submitted'
+                });
+                localStorage.setItem('savedComplaints', JSON.stringify(savedComplaints));
+                
+                // Clear temporary data
+                localStorage.removeItem('complaintId');
+                localStorage.removeItem('department');
+                localStorage.removeItem('category');
+                localStorage.removeItem('title');
+                localStorage.removeItem('description');
+                localStorage.removeItem('location');
+                localStorage.removeItem('filesCount');
+            }
+        });
+
+        function trackComplaint() {
+            const complaintId = document.getElementById('complaintId').textContent;
+            alert(`Tracking feature would redirect to complaint tracking page with ID: ${complaintId}\n\nIn a real application, this would show the full status history and updates for your complaint.`);
+        }
+    </script>
+</body>
+</html>

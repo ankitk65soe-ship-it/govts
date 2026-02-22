@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Delay / Escalate Complaint - Public Service Grievance Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            padding: 40px 40px 30px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .alert-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            background: #f97316;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert-icon svg {
+            width: 35px;
+            height: 35px;
+            fill: white;
+        }
+
+        .header h1 {
+            color: #1e3a5f;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        /* Auto-filled Details Section */
+        .auto-details {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 25px;
+            margin: 30px 40px 20px;
+            border-radius: 8px;
+        }
+
+        .auto-details-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .auto-details-title svg {
+            width: 18px;
+            height: 18px;
+            fill: #f59e0b;
+        }
+
+        .auto-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .auto-detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .auto-detail-label {
+            font-size: 0.8rem;
+            color: #78350f;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .auto-detail-value {
+            font-size: 0.95rem;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .delay-badge {
+            display: inline-block;
+            background: #dc2626;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Form Section */
+        .form-section {
+            padding: 30px 40px 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e3a5f;
+            margin-bottom: 8px;
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        .optional-label {
+            color: #94a3b8;
+            font-weight: 400;
+            font-size: 0.85rem;
+            margin-left: 5px;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            pointer-events: none;
+        }
+
+        .dropdown-field {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #334155;
+            background: white;
+            cursor: pointer;
+            appearance: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .dropdown-field:focus {
+            outline: none;
+            border-color: #f97316;
+        }
+
+        .dropdown-arrow {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            pointer-events: none;
+        }
+
+        textarea.input-field {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #334155;
+            background: white;
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea.input-field:focus {
+            outline: none;
+            border-color: #f97316;
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        .field-hint {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        /* Severity Selection */
+        .severity-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .severity-option {
+            position: relative;
+        }
+
+        .severity-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .severity-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .severity-option input[type="radio"]:checked + .severity-card {
+            border-color: #f97316;
+            background: #fff7ed;
+        }
+
+        .severity-card:hover {
+            border-color: #f97316;
+        }
+
+        .severity-icon {
+            width: 30px;
+            height: 30px;
+            margin: 0 auto 8px;
+        }
+
+        .severity-icon.normal {
+            color: #3b82f6;
+        }
+
+        .severity-icon.serious {
+            color: #f97316;
+        }
+
+        .severity-icon.emergency {
+            color: #dc2626;
+        }
+
+        .severity-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1e3a5f;
+        }
+
+        /* File Upload */
+        .file-upload-container {
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-container:hover {
+            border-color: #f97316;
+            background: #fff7ed;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        .upload-hint {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-list {
+            margin-top: 15px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .file-name {
+            color: #334155;
+            font-size: 0.9rem;
+        }
+
+        .file-remove {
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .file-remove:hover {
+            text-decoration: underline;
+        }
+
+        /* Confirmation Checkbox */
+        .confirmation-box {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+            accent-color: #f97316;
+        }
+
+        .checkbox-label {
+            color: #1e3a5f;
+            font-size: 0.95rem;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fee2e2;
+            border-left: 4px solid #dc2626;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .warning-text {
+            color: #991b1b;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .warning-text svg {
+            width: 18px;
+            height: 18px;
+            fill: #dc2626;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #6c757d;
+            border: 2px solid #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Footer */
+        .footer-tagline {
+            text-align: center;
+            padding: 20px 40px;
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-bar {
+            height: 6px;
+            background: linear-gradient(90deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            .auto-details {
+                margin: 20px;
+            }
+
+            .auto-details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .severity-options {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="alert-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                </svg>
+            </div>
+            <h1>Report Delay / Escalate Complaint</h1>
+            <p>Help us resolve your issue faster by reporting delays or unsatisfactory progress</p>
+        </div>
+
+        <!-- Auto-filled Details -->
+        <div class="auto-details">
+            <div class="auto-details-title">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+                <span>Complaint Information (Auto-filled)</span>
+            </div>
+            <div class="auto-details-grid">
+                <div class="auto-detail-item">
+                    <span class="auto-detail-label">Complaint ID</span>
+                    <span class="auto-detail-value" id="autoComplaintId">-</span>
+                </div>
+                <div class="auto-detail-item">
+                    <span class="auto-detail-label">Officer Name</span>
+                    <span class="auto-detail-value" id="autoOfficerName">-</span>
+                </div>
+                <div class="auto-detail-item">
+                    <span class="auto-detail-label">Department</span>
+                    <span class="auto-detail-value" id="autoDepartment">-</span>
+                </div>
+                <div class="auto-detail-item">
+                    <span class="auto-detail-label">Days Delayed</span>
+                    <span class="auto-detail-value">
+                        <span class="delay-badge" id="autoDaysDelayed">-</span>
+                    </span>
+                </div>
+                <div class="auto-detail-item">
+                    <span class="auto-detail-label">Submitted On</span>
+                    <span class="auto-detail-value" id="autoSubmittedOn">-</span>
+                </div>
+                <div class="auto-detail-item">
+                    <span class="auto-detail-label">Escalation Time</span>
+                    <span class="auto-detail-value" id="autoTimestamp">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <form id="escalationForm" class="form-section">
+            <!-- Reason for Complaint -->
+            <div class="form-group">
+                <label class="form-label">Reason for Escalation <span class="required">*</span></label>
+                <div class="input-container">
+                    <svg class="input-icon icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l-5.5 9h11L12 2zm0 3.84L13.93 9h-3.87L12 5.84zM17.5 13c-2.49 0-4.5 2.01-4.5 4.5s2.01 4.5 4.5 4.5 4.5-2.01 4.5-4.5-2.01-4.5-4.5-4.5zm0 7c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5zM3 21.5h8v-8H3v8zm2-6h4v4H5v-4z"/>
+                    </svg>
+                    <select class="dropdown-field" id="reason" required>
+                        <option value="">Select Reason</option>
+                        <option value="no-action">No action taken</option>
+                        <option value="not-responding">Officer not responding</option>
+                        <option value="no-update">No status update for long time</option>
+                        <option value="false-updates">Repeated false updates</option>
+                        <option value="deadline-crossed">Resolution deadline crossed</option>
+                        <option value="unsatisfactory">Unsatisfactory progress</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <svg class="dropdown-arrow icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M7 10l5 5 5-5z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Severity Level -->
+            <div class="form-group">
+                <label class="form-label">Severity Level <span class="required">*</span></label>
+                <div class="severity-options">
+                    <label class="severity-option">
+                        <input type="radio" name="severity" value="normal" required>
+                        <div class="severity-card">
+                            <svg class="severity-icon normal" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            <div class="severity-label">Normal Delay</div>
+                        </div>
+                    </label>
+                    <label class="severity-option">
+                        <input type="radio" name="severity" value="serious" required>
+                        <div class="severity-card">
+                            <svg class="severity-icon serious" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                            </svg>
+                            <div class="severity-label">Serious Delay</div>
+                        </div>
+                    </label>
+                    <label class="severity-option">
+                        <input type="radio" name="severity" value="emergency" required>
+                        <div class="severity-card">
+                            <svg class="severity-icon emergency" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                            </svg>
+                            <div class="severity-label">Emergency Impact</div>
+                        </div>
+                    </label>
+                </div>
+                <div class="field-hint">Select severity to help authorities prioritize your escalation</div>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label class="form-label">Detailed Description <span class="required">*</span></label>
+                <textarea class="input-field" id="description" placeholder="Explain the delay or issue in detail. Be specific about what has or hasn't happened..." required maxlength="500" oninput="updateCharCount()"></textarea>
+                <div class="char-count" id="charCount">0 / 500 characters</div>
+                <div class="field-hint">Example: "It has been 10 days since assignment. No field visit or update has been provided."</div>
+            </div>
+
+            <!-- Evidence Upload -->
+            <div class="form-group">
+                <label class="form-label">Upload Evidence <span class="optional-label">(Optional but Recommended)</span></label>
+                <div class="file-upload-container" id="fileUploadContainer" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📎</div>
+                    <div class="upload-text">Click to upload or drag and drop</div>
+                    <div class="upload-hint">PNG, JPG, PDF (Max 5MB per file)</div>
+                </div>
+                <input type="file" id="fileInput" class="file-input" multiple accept="image/*,.pdf" onchange="handleFileSelect(event)">
+                <div class="file-list" id="fileList"></div>
+                <div class="field-hint">Upload screenshots, photos, or documents as evidence to support your escalation</div>
+            </div>
+
+            <!-- Warning Box -->
+            <div class="warning-box">
+                <div class="warning-text">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                    </svg>
+                    <span><strong>Important:</strong> False or misleading escalations may result in action against your account. Please ensure all information provided is accurate.</span>
+                </div>
+            </div>
+
+            <!-- Confirmation Checkbox -->
+            <div class="confirmation-box">
+                <label class="checkbox-container">
+                    <input type="checkbox" id="confirmation" required>
+                    <span class="checkbox-label">I confirm that the above information is accurate and I understand that false escalations may result in action against my account.</span>
+                </label>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="button" class="btn btn-secondary" onclick="goBack()">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn">Submit Escalation</button>
+            </div>
+        </form>
+
+        <!-- Footer -->
+        <div class="footer-tagline">
+            <span>Your escalation will be reviewed by senior authorities</span>
+        </div>
+        <div class="footer-bar"></div>
+    </div>
+
+    <script>
+        let uploadedFiles = [];
+
+        // Load complaint data from localStorage
+        function loadComplaintData() {
+            const complaintDataStr = localStorage.getItem('currentComplaint');
+            const complaintId = localStorage.getItem('currentComplaintId');
+
+            if (complaintDataStr) {
+                try {
+                    const data = JSON.parse(complaintDataStr);
+                    
+                    // Set auto-filled fields
+                    document.getElementById('autoComplaintId').textContent = data.displayId || complaintId || '-';
+                    document.getElementById('autoOfficerName').textContent = data.officerName || 'Not Assigned';
+                    document.getElementById('autoDepartment').textContent = data.departmentFull || '-';
+                    document.getElementById('autoSubmittedOn').textContent = data.submittedOn || '-';
+                    
+                    // Use timeElapsed from complaint details data (same as shown on complaint-details page)
+                    if (data.timeElapsed) {
+                        document.getElementById('autoDaysDelayed').textContent = data.timeElapsed;
+                        
+                        // Update badge color based on days in timeElapsed
+                        const badge = document.getElementById('autoDaysDelayed');
+                        const daysMatch = data.timeElapsed.match(/(\d+)\s*Day/i);
+                        const daysNum = daysMatch ? parseInt(daysMatch[1]) : 0;
+                        if (daysNum > 15) {
+                            badge.style.background = '#dc2626';
+                        } else if (daysNum > 7) {
+                            badge.style.background = '#f97316';
+                        } else {
+                            badge.style.background = '#3b82f6';
+                        }
+                    } else {
+                        document.getElementById('autoDaysDelayed').textContent = '-';
+                    }
+                    
+                    // Set current timestamp
+                    const now = new Date();
+                    const options = { 
+                        day: 'numeric',
+                        month: 'long', 
+                        year: 'numeric', 
+                        hour: '2-digit', 
+                        minute: '2-digit',
+                        hour12: true
+                    };
+                    const timestamp = now.toLocaleDateString('en-GB', options).replace(',', ' –');
+                    document.getElementById('autoTimestamp').textContent = timestamp;
+                    
+                    // Auto-select recommended severity level
+                    if (data.recommendedSeverity) {
+                        const severityRadio = document.querySelector(`input[name="severity"][value="${data.recommendedSeverity}"]`);
+                        if (severityRadio) {
+                            severityRadio.checked = true;
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.error('Error loading complaint data:', error);
+                    // Set default values
+                    setDefaultValues();
+                }
+            } else {
+                // No data found - set defaults
+                setDefaultValues();
+            }
+        }
+
+        function setDefaultValues() {
+            document.getElementById('autoComplaintId').textContent = '-';
+            document.getElementById('autoOfficerName').textContent = 'Not Assigned';
+            document.getElementById('autoDepartment').textContent = '-';
+            document.getElementById('autoSubmittedOn').textContent = '-';
+            document.getElementById('autoDaysDelayed').textContent = '-';
+            
+            const now = new Date();
+            const options = { 
+                day: 'numeric',
+                month: 'long', 
+                year: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true
+            };
+            const timestamp = now.toLocaleDateString('en-GB', options).replace(',', ' –');
+            document.getElementById('autoTimestamp').textContent = timestamp;
+        }
+
+        function updateCharCount() {
+            const textarea = document.getElementById('description');
+            const charCount = document.getElementById('charCount');
+            const count = textarea.value.length;
+            charCount.textContent = `${count} / 500 characters`;
+            
+            if (count > 450) {
+                charCount.style.color = '#ef4444';
+            } else {
+                charCount.style.color = '#94a3b8';
+            }
+        }
+
+        function handleFileSelect(event) {
+            const files = Array.from(event.target.files);
+            
+            files.forEach(file => {
+                // Check file size (5MB limit)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`File ${file.name} is too large. Maximum size is 5MB.`);
+                    return;
+                }
+                
+                uploadedFiles.push(file);
+            });
+            
+            displayFiles();
+        }
+
+        function displayFiles() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            
+            uploadedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <span class="file-name">📄 ${file.name} (${(file.size / 1024).toFixed(1)} KB)</span>
+                    <span class="file-remove" onclick="removeFile(${index})">Remove</span>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            displayFiles();
+        }
+
+        // Drag and drop functionality
+        const fileUploadContainer = document.getElementById('fileUploadContainer');
+        
+        fileUploadContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadContainer.style.borderColor = '#f97316';
+            fileUploadContainer.style.background = '#fff7ed';
+        });
+        
+        fileUploadContainer.addEventListener('dragleave', () => {
+            fileUploadContainer.style.borderColor = '#cbd5e1';
+            fileUploadContainer.style.background = '#f8fafc';
+        });
+        
+        fileUploadContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadContainer.style.borderColor = '#cbd5e1';
+            fileUploadContainer.style.background = '#f8fafc';
+            
+            const files = Array.from(e.dataTransfer.files);
+            files.forEach(file => {
+                if (file.size <= 5 * 1024 * 1024 && (file.type.startsWith('image/') || file.type === 'application/pdf')) {
+                    uploadedFiles.push(file);
+                }
+            });
+            
+            displayFiles();
+        });
+
+        // Form submission
+        document.getElementById('escalationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const reason = document.getElementById('reason').value;
+            const severity = document.querySelector('input[name="severity"]:checked');
+            const description = document.getElementById('description').value;
+            const confirmation = document.getElementById('confirmation').checked;
+            
+            if (!reason || !severity || !description || !confirmation) {
+                alert('Please fill all required fields and confirm the information.');
+                return;
+            }
+            
+            // Get reason text
+            const reasonText = document.querySelector(`#reason option[value="${reason}"]`).textContent;
+            
+            // Get severity text
+            const severityText = severity.value.charAt(0).toUpperCase() + severity.value.slice(1) + ' Delay';
+            
+            // Show success message
+            alert(`✅ Escalation Submitted Successfully!
+
+Your escalation has been forwarded to senior authorities for review.
+
+Escalation Details:
+- Reason: ${reasonText}
+- Severity: ${severityText}
+- Evidence Files: ${uploadedFiles.length}
+
+You will receive an update within 24-48 hours.`);
+            
+            // Redirect back to complaint details
+            window.location.href = 'complaint-details.html';
+        });
+
+        function goBack() {
+            window.history.back();
+        }
+
+        // Load data on page load
+        window.addEventListener('DOMContentLoaded', loadComplaintData);
+    </script>
+</body>
+</html>

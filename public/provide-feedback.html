@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provide Feedback - Public Service Grievance Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            padding: 40px 40px 30px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .feedback-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feedback-icon svg {
+            width: 35px;
+            height: 35px;
+            fill: white;
+        }
+
+        .header h1 {
+            color: #1e3a5f;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Complaint Reference */
+        .complaint-ref {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 20px 25px;
+            margin: 30px 40px 20px;
+            border-radius: 8px;
+        }
+
+        .ref-title {
+            font-size: 0.85rem;
+            color: #1e40af;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .ref-value {
+            font-size: 1.1rem;
+            color: #1e3a5f;
+            font-weight: 700;
+        }
+
+        /* Form Section */
+        .form-section {
+            padding: 30px 40px 40px;
+        }
+
+        .section-divider {
+            border-top: 2px solid #e2e8f0;
+            margin: 35px 0 30px;
+            position: relative;
+        }
+
+        .section-divider-text {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 0 15px;
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e3a5f;
+            margin-bottom: 8px;
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        .optional-label {
+            color: #94a3b8;
+            font-weight: 400;
+            font-size: 0.85rem;
+            margin-left: 5px;
+        }
+
+        .field-description {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        /* Rating System */
+        .rating-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .rating-option {
+            position: relative;
+        }
+
+        .rating-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .rating-box {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .rating-option input[type="radio"]:checked + .rating-box {
+            border-color: #10b981;
+            background: #10b981;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .rating-option:hover .rating-box {
+            border-color: #10b981;
+        }
+
+        .rating-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        /* Dropdown */
+        .input-container {
+            position: relative;
+        }
+
+        .dropdown-field {
+            width: 100%;
+            padding: 15px 45px 15px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #334155;
+            background: white;
+            cursor: pointer;
+            appearance: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .dropdown-field:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+
+        .dropdown-arrow {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            pointer-events: none;
+        }
+
+        /* Textarea */
+        textarea.input-field {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #334155;
+            background: white;
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea.input-field:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        /* Radio Options */
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .radio-option:hover {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #10b981;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            color: #1e3a5f;
+            font-size: 0.95rem;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .radio-option input[type="radio"]:checked ~ label {
+            font-weight: 600;
+            color: #059669;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .info-text {
+            color: #1e40af;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .info-text svg {
+            width: 18px;
+            height: 18px;
+            fill: #3b82f6;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #6c757d;
+            border: 2px solid #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Footer */
+        .footer-tagline {
+            text-align: center;
+            padding: 20px 40px;
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-bar {
+            height: 6px;
+            background: linear-gradient(90deg, #10b981 0%, #059669 50%, #047857 100%);
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            .complaint-ref {
+                margin: 20px;
+            }
+
+            .rating-container {
+                justify-content: center;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="feedback-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 14v-2.47l6.88-6.88c.2-.2.51-.2.71 0l1.77 1.77c.2.2.2.51 0 .71L8.47 14H6zm12 0h-7.5l2-2H18v2z"/>
+                </svg>
+            </div>
+            <h1>Where transparency thrives and accountability leads, nations transform.
+</h1>
+            <p>Your feedback helps us improve our services and better serve the public</p>
+        </div>
+
+        <!-- Complaint Reference -->
+        <div class="complaint-ref">
+            <div class="ref-title">Complaint Reference</div>
+            <div class="ref-value" id="complaintRefId">CCTS-2026-01567</div>
+        </div>
+
+        <!-- Form Section -->
+        <form id="feedbackForm" class="form-section">
+            <!-- Info Box -->
+            <div class="info-box">
+                <div class="info-text">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                    </svg>
+                    <span>Your feedback is confidential and will be used to improve service quality. Please provide honest and constructive feedback.</span>
+                </div>
+            </div>
+
+            <!-- Complaint Resolution Feedback -->
+            <div class="form-group">
+                <label class="form-label">1. Complaint Resolution Feedback <span class="required">*</span></label>
+                <div class="field-description">Please rate your satisfaction with how your complaint was handled and resolved</div>
+                <div class="rating-container">
+                    <label class="rating-option">
+                        <input type="radio" name="resolution-rating" value="1" required>
+                        <div class="rating-box">1</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="resolution-rating" value="2">
+                        <div class="rating-box">2</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="resolution-rating" value="3">
+                        <div class="rating-box">3</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="resolution-rating" value="4">
+                        <div class="rating-box">4</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="resolution-rating" value="5">
+                        <div class="rating-box">5</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="resolution-rating" value="6">
+                        <div class="rating-box">6</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="resolution-rating" value="7">
+                        <div class="rating-box">7</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="resolution-rating" value="8">
+                        <div class="rating-box">8</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="resolution-rating" value="9">
+                        <div class="rating-box">9</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="resolution-rating" value="10">
+                        <div class="rating-box">10</div>
+                    </label>
+                </div>
+                <div class="rating-labels">
+                    <span>Poor</span>
+                    <span>Excellent</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Resolution Comments <span class="optional-label">(Optional)</span></label>
+                <textarea class="input-field" id="resolutionComments" placeholder="Please share your experience regarding the complaint resolution process..." maxlength="500" oninput="updateCharCount('resolution')"></textarea>
+                <div class="char-count" id="resolutionCharCount">0 / 500 characters</div>
+            </div>
+
+            <!-- Section Divider -->
+            <div class="section-divider">
+                <span class="section-divider-text">Officer Behavior</span>
+            </div>
+
+            <!-- Officer Behavior Feedback -->
+            <div class="form-group">
+                <label class="form-label">2. Officer Behavior Feedback <span class="required">*</span></label>
+                <div class="field-description">Rate the professionalism and conduct of the officer handling your complaint</div>
+                <div class="rating-container">
+                    <label class="rating-option">
+                        <input type="radio" name="officer-rating" value="1" required>
+                        <div class="rating-box">1</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="officer-rating" value="2">
+                        <div class="rating-box">2</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="officer-rating" value="3">
+                        <div class="rating-box">3</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="officer-rating" value="4">
+                        <div class="rating-box">4</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="officer-rating" value="5">
+                        <div class="rating-box">5</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="officer-rating" value="6">
+                        <div class="rating-box">6</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="officer-rating" value="7">
+                        <div class="rating-box">7</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="officer-rating" value="8">
+                        <div class="rating-box">8</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="officer-rating" value="9">
+                        <div class="rating-box">9</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="officer-rating" value="10">
+                        <div class="rating-box">10</div>
+                    </label>
+                </div>
+                <div class="rating-labels">
+                    <span>Unprofessional</span>
+                    <span>Highly Professional</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Officer Behavior Comments <span class="optional-label">(Optional)</span></label>
+                <textarea class="input-field" id="officerComments" placeholder="Please provide feedback on the officer's behavior, communication, and professionalism..." maxlength="500" oninput="updateCharCount('officer')"></textarea>
+                <div class="char-count" id="officerCharCount">0 / 500 characters</div>
+            </div>
+
+            <!-- Section Divider -->
+            <div class="section-divider">
+                <span class="section-divider-text">Portal Experience</span>
+            </div>
+
+            <!-- Portal Experience Feedback -->
+            <div class="form-group">
+                <label class="form-label">3. Portal Experience Feedback <span class="required">*</span></label>
+                <div class="field-description">Rate your overall experience using this grievance portal</div>
+                <div class="rating-container">
+                    <label class="rating-option">
+                        <input type="radio" name="portal-rating" value="1" required>
+                        <div class="rating-box">1</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="portal-rating" value="2">
+                        <div class="rating-box">2</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="portal-rating" value="3">
+                        <div class="rating-box">3</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="portal-rating" value="4">
+                        <div class="rating-box">4</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="portal-rating" value="5">
+                        <div class="rating-box">5</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="portal-rating" value="6">
+                        <div class="rating-box">6</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="portal-rating" value="7">
+                        <div class="rating-box">7</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="portal-rating" value="8">
+                        <div class="rating-box">8</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="portal-rating" value="9">
+                        <div class="rating-box">9</div>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="portal-rating" value="10">
+                        <div class="rating-box">10</div>
+                    </label>
+                </div>
+                <div class="rating-labels">
+                    <span>Very Difficult</span>
+                    <span>Very Easy</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Portal Experience Comments <span class="optional-label">(Optional)</span></label>
+                <textarea class="input-field" id="portalComments" placeholder="Please share your feedback about the portal's ease of use, navigation, and features..." maxlength="500" oninput="updateCharCount('portal')"></textarea>
+                <div class="char-count" id="portalCharCount">0 / 500 characters</div>
+            </div>
+
+            <!-- Section Divider -->
+            <div class="section-divider">
+                <span class="section-divider-text">Additional Feedback</span>
+            </div>
+
+            <!-- Suggestions / Improvements -->
+            <div class="form-group">
+                <label class="form-label">4. Suggestions / Improvements <span class="optional-label">(Optional)</span></label>
+                <div class="field-description">Please share any suggestions for improving our services</div>
+                <textarea class="input-field" id="suggestions" placeholder="Your suggestions for improvement are valuable to us..." maxlength="1000" oninput="updateCharCount('suggestions')"></textarea>
+                <div class="char-count" id="suggestionsCharCount">0 / 1000 characters</div>
+            </div>
+
+            <!-- Technical Issues -->
+            <div class="form-group">
+                <label class="form-label">5. Technical Issues <span class="optional-label">(Optional)</span></label>
+                <div class="field-description">Report any technical problems you encountered while using the portal</div>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="technical-issue" value="none" id="tech-none" checked>
+                        <label for="tech-none">No technical issues encountered</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="technical-issue" value="slow-loading" id="tech-slow">
+                        <label for="tech-slow">Slow page loading</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="technical-issue" value="broken-links" id="tech-links">
+                        <label for="tech-links">Broken links or buttons</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="technical-issue" value="upload-error" id="tech-upload">
+                        <label for="tech-upload">File upload errors</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="technical-issue" value="mobile-issue" id="tech-mobile">
+                        <label for="tech-mobile">Mobile compatibility issues</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="technical-issue" value="other" id="tech-other">
+                        <label for="tech-other">Other technical issues</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" id="technicalDetailsGroup" style="display: none;">
+                <label class="form-label">Describe Technical Issue</label>
+                <textarea class="input-field" id="technicalDetails" placeholder="Please describe the technical issue you encountered..." maxlength="500" oninput="updateCharCount('technical')"></textarea>
+                <div class="char-count" id="technicalCharCount">0 / 500 characters</div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="button" class="btn btn-secondary" onclick="goBack()">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn">Submit Feedback</button>
+            </div>
+        </form>
+
+        <!-- Footer -->
+        <div class="footer-tagline">
+            <span>Your feedback is valuable and will be reviewed by the concerned authorities</span>
+        </div>
+        <div class="footer-bar"></div>
+    </div>
+
+    <script>
+        // Load complaint reference from localStorage
+        function loadComplaintReference() {
+            const complaintDataStr = localStorage.getItem('currentComplaint');
+            
+            if (complaintDataStr) {
+                try {
+                    const data = JSON.parse(complaintDataStr);
+                    document.getElementById('complaintRefId').textContent = data.displayId || 'N/A';
+                } catch (error) {
+                    console.error('Error loading complaint reference:', error);
+                }
+            }
+        }
+
+        function updateCharCount(type) {
+            const textareas = {
+                'resolution': 'resolutionComments',
+                'officer': 'officerComments',
+                'portal': 'portalComments',
+                'suggestions': 'suggestions',
+                'technical': 'technicalDetails'
+            };
+            
+            const maxLengths = {
+                'resolution': 500,
+                'officer': 500,
+                'portal': 500,
+                'suggestions': 1000,
+                'technical': 500
+            };
+            
+            const textarea = document.getElementById(textareas[type]);
+            const charCount = document.getElementById(type + 'CharCount');
+            const count = textarea.value.length;
+            const max = maxLengths[type];
+            
+            charCount.textContent = `${count} / ${max} characters`;
+            
+            if (count > max * 0.9) {
+                charCount.style.color = '#ef4444';
+            } else {
+                charCount.style.color = '#94a3b8';
+            }
+        }
+
+        // Show/hide technical details textarea based on selection
+        document.querySelectorAll('input[name="technical-issue"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const detailsGroup = document.getElementById('technicalDetailsGroup');
+                if (this.value !== 'none') {
+                    detailsGroup.style.display = 'block';
+                } else {
+                    detailsGroup.style.display = 'none';
+                }
+            });
+        });
+
+        // Form submission
+        document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const resolutionRating = document.querySelector('input[name="resolution-rating"]:checked');
+            const officerRating = document.querySelector('input[name="officer-rating"]:checked');
+            const portalRating = document.querySelector('input[name="portal-rating"]:checked');
+            
+            if (!resolutionRating || !officerRating || !portalRating) {
+                alert('Please provide all required ratings.');
+                return;
+            }
+            
+            // Store feedback data in localStorage
+            const feedbackData = {
+                resolutionRating: resolutionRating.value,
+                officerRating: officerRating.value,
+                portalRating: portalRating.value,
+                resolutionComments: document.getElementById('resolutionComments').value,
+                officerComments: document.getElementById('officerComments').value,
+                portalComments: document.getElementById('portalComments').value,
+                suggestions: document.getElementById('suggestions').value,
+                technicalIssue: document.querySelector('input[name="technical-issue"]:checked').value,
+                technicalDetails: document.getElementById('technicalDetails').value,
+                submittedAt: new Date().toISOString()
+            };
+            
+            localStorage.setItem('feedbackSubmission', JSON.stringify(feedbackData));
+            
+            // Redirect to success page
+            window.location.href = 'feedback-success.html';
+        });
+
+        function goBack() {
+            window.history.back();
+        }
+
+        // Load data on page load
+        window.addEventListener('DOMContentLoaded', loadComplaintReference);
+    </script>
+</body>
+</html>

@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SevaPulse – Citizen Service & Transparency Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue:#1e4d8c;--blue2:#2563eb;--green:#10b981;--orange:#f97316;--red:#ef4444;--yellow:#f59e0b;
+  --bg:#f0f4fb;--white:#fff;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* NAV */
+nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:16px}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,#f97316,#ef4444);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:22px;height:22px;fill:white}
+.logo-text{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.3rem;color:#1e293b}
+.logo-text span{color:#f97316}
+.nav-divider{width:1px;height:30px;background:#e2e8f0;margin:0 16px}
+.portal-tag{font-size:.82rem;color:var(--muted);font-weight:500;border-right:1px solid var(--border);padding-right:16px}
+.nav-links{display:flex;align-items:center;gap:4px;margin-left:auto}
+.nav-link{padding:8px 14px;border-radius:8px;font-size:.88rem;font-weight:600;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:.2s}
+.nav-link:hover{background:#f1f5f9;color:var(--text)}
+.nav-link.active{background:var(--blue2);color:white}
+.nav-link svg{width:15px;height:15px}
+
+/* HEADER */
+.page-header{text-align:center;padding:36px 20px 28px;background:linear-gradient(160deg,#eef4ff 0%,#f0f9ff 50%,#ecfdf5 100%)}
+.page-header h1{font-family:'Nunito',sans-serif;font-size:2rem;font-weight:900;color:var(--text);margin-bottom:8px}
+.page-header p{color:var(--muted);font-size:.95rem}
+
+/* FILTER BAR */
+.filter-bar{background:var(--white);border-bottom:1px solid var(--border);padding:14px 0}
+.filter-inner{max-width:1400px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:28px}
+.filter-group{display:flex;align-items:center;gap:10px}
+.filter-label{font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;color:var(--text)}
+.filter-select-wrap{position:relative;display:inline-flex;align-items:center}
+.filter-select{appearance:none;-webkit-appearance:none;padding:7px 36px 7px 14px;font-size:.9rem;font-family:'Inter',sans-serif;font-weight:600;color:var(--text);background:var(--white);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;outline:none;transition:.2s;min-width:120px}
+.filter-select:hover{border-color:#94a3b8}
+.filter-select:focus{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.select-arrow{position:absolute;right:10px;width:16px;height:16px;stroke:#64748b;pointer-events:none}
+.compare-btn{margin-left:auto;display:inline-flex;align-items:center;gap:8px;padding:9px 20px;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.9rem;cursor:pointer;transition:.2s;box-shadow:0 4px 14px rgba(124,58,237,.3)}
+.compare-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(124,58,237,.4)}
+.compare-btn svg{width:16px;height:16px;stroke:white}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:999;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:white;border-radius:20px;width:90%;max-width:820px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.18);animation:modalIn .25s ease}
+@keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;padding:24px 28px 16px;border-bottom:1px solid var(--border)}
+.modal-title{font-family:'Nunito',sans-serif;font-size:1.3rem;font-weight:900;color:var(--text)}
+.modal-sub{font-size:.85rem;color:var(--muted);margin-top:3px;font-weight:500}
+.modal-close{width:34px;height:34px;border:none;background:#f1f5f9;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s}
+.modal-close:hover{background:#e2e8f0}
+.modal-close svg{width:16px;height:16px}
+
+/* Modal Summary */
+.modal-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:20px 28px;border-bottom:1px solid var(--border)}
+.ms-card{background:#f8fafc;border-radius:12px;padding:14px 16px;text-align:center}
+.ms-label{font-size:.76rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.ms-value{font-family:'Nunito',sans-serif;font-size:1.5rem;font-weight:900;color:var(--text)}
+.ms-change{font-size:.82rem;font-weight:700;margin-top:3px}
+.ms-up{color:#10b981}.ms-down{color:#ef4444}.ms-neutral{color:var(--muted)}
+
+/* Modal Table */
+.modal-table-wrap{padding:16px 28px 24px}
+.modal-table-header{display:grid;grid-template-columns:1fr 100px 100px 90px 1fr;gap:10px;padding:8px 12px;background:#f8fafc;border-radius:10px;margin-bottom:8px}
+.modal-table-header span{font-size:.74rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.compare-row{display:grid;grid-template-columns:1fr 100px 100px 90px 1fr;gap:10px;align-items:center;padding:12px 12px;border-bottom:1px solid #f1f5f9;transition:.15s}
+.compare-row:last-child{border-bottom:none}
+.compare-row:hover{background:#f8fafc;border-radius:10px}
+.cr-dept{display:flex;align-items:center;gap:8px}
+.cr-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cr-icon svg{width:15px;height:15px;fill:white}
+.cr-name{font-size:.88rem;font-weight:700;color:var(--text)}
+.cr-val{font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:800;color:var(--text)}
+.cr-prev{color:var(--muted)}
+.cr-change{font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900}
+.cr-change.up{color:#10b981}.cr-change.down{color:#ef4444}.cr-change.same{color:var(--muted)}
+.cr-bar-wrap{display:flex;align-items:center;gap:8px}
+.cr-bar{flex:1;height:8px;background:#e2e8f0;border-radius:10px;overflow:hidden;position:relative}
+.cr-bar-prev{position:absolute;top:0;left:0;height:100%;background:#cbd5e1;border-radius:10px;transition:width .6s ease}
+.cr-bar-curr{position:absolute;top:0;left:0;height:100%;border-radius:10px;transition:width .6s ease}
+.cr-arrow{font-size:1rem}
+
+/* LAYOUT */
+.main{max-width:1400px;margin:0 auto;padding:24px 20px}
+
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--white);border-radius:16px;padding:20px 22px;box-shadow:0 2px 12px rgba(0,0,0,.06);display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;border-radius:0 0 16px 16px}
+.stat-card.blue::after{background:linear-gradient(90deg,#2563eb,#60a5fa)}
+.stat-card.green::after{background:linear-gradient(90deg,#10b981,#34d399)}
+.stat-card.orange::after{background:linear-gradient(90deg,#f97316,#fb923c)}
+.stat-card.purple::after{background:linear-gradient(90deg,#7c3aed,#a78bfa)}
+.stat-top{display:flex;align-items:flex-start;gap:14px}
+.stat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stat-icon svg{width:26px;height:26px;fill:white}
+.stat-icon.blue{background:linear-gradient(135deg,#2563eb,#1e40af)}
+.stat-icon.green{background:linear-gradient(135deg,#10b981,#059669)}
+.stat-icon.orange{background:linear-gradient(135deg,#f97316,#ea580c)}
+.stat-icon.purple{background:linear-gradient(135deg,#7c3aed,#6d28d9)}
+.stat-info{}
+.stat-label{font-size:.82rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.stat-value{font-family:'Nunito',sans-serif;font-size:2rem;font-weight:900;color:var(--text);line-height:1.1;margin-top:2px}
+.stat-sub{font-size:.8rem;font-weight:600;margin-top:2px}
+.stat-sub.up{color:#10b981}.stat-sub.down{color:#ef4444}.stat-sub.neutral{color:var(--muted)}
+.progress-bar{height:6px;background:#e2e8f0;border-radius:10px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;border-radius:10px;transition:width 1s ease}
+.fill-blue{background:linear-gradient(90deg,#2563eb,#60a5fa)}
+.fill-green{background:linear-gradient(90deg,#10b981,#34d399)}
+.fill-orange{background:linear-gradient(90deg,#f97316,#fb923c)}
+.fill-purple{background:linear-gradient(90deg,#7c3aed,#a78bfa)}
+
+/* GRID */
+.content-grid{display:grid;grid-template-columns:1fr 1fr 300px;gap:20px;margin-bottom:24px;align-items:stretch}
+.content-grid>div{min-height:0}
+
+/* SECTION CARDS */
+.card{background:var(--white);border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.card-title{font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:var(--text);margin-bottom:16px}
+.card-title span{font-size:.8rem;color:var(--muted);font-weight:500;margin-left:6px}
+
+/* DEPT TABLE */
+.dept-table{width:100%}
+.dept-header{display:grid;grid-template-columns:40px 1fr 120px 80px;gap:10px;padding:8px 0;border-bottom:2px solid var(--border);margin-bottom:4px}
+.dept-header span{font-size:.82rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.dept-row{display:grid;grid-template-columns:40px 1fr 120px 80px;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9}
+.dept-row:last-child{border-bottom:none}
+.rank-badge{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:.95rem}
+.rank-1{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:white}
+.rank-2{background:linear-gradient(135deg,#94a3b8,#64748b);color:white}
+.rank-3{background:linear-gradient(135deg,#f97316,#ea580c);color:white}
+.rank-other{background:#f1f5f9;color:var(--text);font-size:.88rem}
+.dept-name-cell{display:flex;align-items:center;gap:8px}
+.dept-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dept-icon svg{width:18px;height:18px;fill:white}
+.icon-sanitation{background:linear-gradient(135deg,#10b981,#059669)}
+.icon-water{background:linear-gradient(135deg,#06b6d4,#0891b2)}
+.icon-electricity{background:linear-gradient(135deg,#eab308,#ca8a04)}
+.icon-road-safety{background:linear-gradient(135deg,#ef4444,#dc2626)}
+.icon-health{background:linear-gradient(135deg,#3b82f6,#2563eb)}
+.icon-public-works{background:linear-gradient(135deg,#10b981,#059669)}
+.icon-education{background:linear-gradient(135deg,#8b5cf6,#7c3aed)}
+.icon-transportation{background:linear-gradient(135deg,#14b8a6,#0d9488)}
+.icon-other{background:linear-gradient(135deg,#6b7280,#4b5563)}
+.dept-name-text{font-size:1rem;font-weight:700;color:var(--text)}
+.rate-wrap{display:flex;flex-direction:column;gap:4px}
+.rate-pct{font-size:.97rem;font-weight:800;font-family:'Nunito',sans-serif}
+.rate-pct.excellent{color:#10b981}.rate-pct.good{color:#2563eb}.rate-pct.avg{color:#f97316}.rate-pct.poor{color:#ef4444}
+.rate-bar{height:5px;background:#e2e8f0;border-radius:10px;overflow:hidden;width:90px}
+.rate-bar-fill{height:100%;border-radius:10px}
+.days-badge{font-size:.92rem;color:var(--muted);font-weight:600;white-space:nowrap}
+#deptTable{flex:1;display:flex;flex-direction:column;justify-content:space-between}
+#overdueList{flex:1;display:flex;flex-direction:column;justify-content:space-between}
+
+/* CHART */
+.chart-wrap{position:relative;height:220px}
+
+/* PUBLIC FEEDBACK */
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 0}
+.gauge-canvas{position:relative;width:220px;height:130px}
+.gauge-score{text-align:center}
+.gauge-score .big{font-family:'Nunito',sans-serif;font-size:2.8rem;font-weight:900;color:var(--text)}
+.gauge-score .of5{font-size:1.1rem;color:var(--muted);font-weight:600}
+.stars-row{display:flex;gap:3px;margin-top:4px}
+.star-svg{width:18px;height:18px}
+.star-full{fill:#fbbf24}.star-empty{fill:#e2e8f0}
+.review-count{font-size:.8rem;color:var(--muted);margin-top:4px}
+.view-btn{margin-top:12px;background:var(--blue2);color:white;border:none;border-radius:10px;padding:10px 20px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.88rem;cursor:pointer;width:100%;transition:.2s}
+.view-btn:hover{background:#1d4ed8}
+
+/* OVERDUE */
+.overdue-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:0}
+.overdue-card{background:var(--white);border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.overdue-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9}
+.overdue-row:last-child{border-bottom:none}
+.overdue-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.overdue-icon svg{width:16px;height:16px;fill:white}
+.oi-water{background:#06b6d4}.oi-electricity{background:#eab308}.oi-transport{background:#f97316}.oi-roads{background:#ef4444}
+.oi-health{background:#3b82f6}.oi-sanitation{background:#10b981}.oi-education{background:#8b5cf6}.oi-other{background:#6b7280}
+.overdue-name{font-size:1rem;font-weight:700;color:var(--text);flex:1}
+.overdue-pct{font-size:.95rem;font-weight:800;color:var(--muted);white-space:nowrap}
+.overdue-bar{flex:1;height:6px;background:#e2e8f0;border-radius:10px;overflow:hidden}
+.ob-fill{height:100%;border-radius:10px}
+.ob-green{background:#10b981}.ob-yellow{background:#f59e0b}.ob-orange{background:#f97316}.ob-red{background:#ef4444}
+
+/* BOTTOM */
+.bottom-grid{display:grid;grid-template-columns:1fr 300px;gap:20px}
+
+@media(max-width:1100px){.content-grid{grid-template-columns:1fr 300px}.content-grid>.card:first-child{grid-column:1/-1}.bottom-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr}.content-grid,.bottom-grid{grid-template-columns:1fr}}
+
+/* FEEDBACK PDF MODAL */
+.feedback-modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.65);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.feedback-modal-overlay.open{display:flex}
+.feedback-modal-box{background:white;border-radius:20px;width:92%;max-width:960px;height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.22);animation:modalIn .25s ease}
+.feedback-modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 28px;border-bottom:1px solid var(--border);flex-shrink:0}
+.feedback-modal-title{font-family:'Nunito',sans-serif;font-size:1.25rem;font-weight:900;color:var(--text)}
+.feedback-modal-close{width:36px;height:36px;border:none;background:#f1f5f9;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.feedback-modal-close:hover{background:#e2e8f0}
+.feedback-modal-close svg{width:16px;height:16px}
+.feedback-pdf-frame{flex:1;border:none;border-radius:0 0 20px 20px;width:100%}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+    </div>
+    <span class="logo-text"><span>Seva</span>Pulse</span>
+  </a>
+  <div class="nav-divider"></div>
+  <span class="portal-tag">Citizen Service &amp; Transparency Portal</span>
+  <div class="nav-links">
+    <a href="#" class="nav-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home
+    </a>
+    <a href="#" class="nav-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/></svg>Lodge Complaint
+    </a>
+    <a href="#" class="nav-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard
+    </a>
+    <a href="#" class="nav-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>Transparency
+    </a>
+    <a href="#" class="nav-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>Reports
+    </a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <h1>Public Department Performance Dashboard</h1>
+  <p>See how government departments are handling public grievances.</p>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-inner">
+    <div class="filter-group">
+      <label class="filter-label">Year:</label>
+      <div class="filter-select-wrap">
+        <select class="filter-select" id="yearFilter">
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+        </select>
+        <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">Month:</label>
+      <div class="filter-select-wrap">
+        <select class="filter-select" id="monthFilter">
+          <option value="all">All Months</option>
+          <option value="1">January</option>
+          <option value="2">February</option>
+          <option value="3">March</option>
+          <option value="4">April</option>
+          <option value="5">May</option>
+          <option value="6">June</option>
+          <option value="7">July</option>
+          <option value="8">August</option>
+          <option value="9">September</option>
+          <option value="10">October</option>
+          <option value="11">November</option>
+          <option value="12">December</option>
+        </select>
+        <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <button class="compare-btn" id="compareBtn" onclick="openCompare()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Compare with Previous Year
+    </button>
+  </div>
+</div>
+
+<!-- COMPARE MODAL -->
+<div class="modal-overlay" id="compareModal" onclick="closeCompare(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalTitle">Year-over-Year Comparison</div>
+        <div class="modal-sub" id="modalSub">2026 vs 2025</div>
+      </div>
+      <button class="modal-close" onclick="closeCompare()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Summary row -->
+    <div class="modal-summary" id="modalSummary"></div>
+
+    <!-- Department comparison table -->
+    <div class="modal-table-wrap">
+      <div class="modal-table-header">
+        <span>Department</span>
+        <span>Previous Year</span>
+        <span>Current Year</span>
+        <span>Change</span>
+        <span>Trend</span>
+      </div>
+      <div id="compareRows"></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- STAT CARDS -->
+  <div class="stats-row">
+    <div class="stat-card blue">
+      <div class="stat-top">
+        <div class="stat-icon blue">
+          <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.36C18 2.51 16.5 1 14.64 1c-.97 0-1.88.4-2.53 1.07L12 2.19l-.11-.12C11.23 1.4 10.32 1 9.36 1 7.5 1 6 2.51 6 4.64c0 .48.11.92.18 1.36H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5.36-3c.87 0 1.36.79 1.36 1.64 0 1.07-.86 1.36-1.88 1.36H13v-.45c0-1.37.42-2.55 1.64-2.55zM8 4.64C8 3.79 8.49 3 9.36 3 10.58 3 11 4.18 11 5.55V6H9.52C8.5 6 8 5.71 8 4.64zM11 19H4v-2h7v2zm0-4H4v-2h7v2zm0-4H4V9h7v2zm9 8h-7v-2h7v2zm0-4h-7v-2h7v2zm0-4h-7V9h7v2z"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Total Complaints</div>
+          <div class="stat-value" id="totalComplaints">8,97,567</div>
+          <div class="stat-sub up">↑ 8% vs Last Month</div>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill fill-blue" style="width:72%"></div></div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-top">
+        <div class="stat-icon green">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Resolved Cases</div>
+          <div class="stat-value" id="totalResolved">6,57,655</div>
+          <div class="stat-sub up">73% Resolved Rate</div>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill fill-green" style="width:88%"></div></div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-top">
+        <div class="stat-icon orange">
+          <svg viewBox="0 0 24 24"><path d="M6 2v6l2 2-2 2v6l6-4 6 4v-6l-2-2 2-2V2l-6 4-6-4zm6 5.39L9.5 9.5h5L12 7.39zm0 4.22l2.5 2.11h-5L12 11.61zm0 5.11l-3-2h6l-3 2z"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Pending Cases</div>
+          <div class="stat-value" id="pendingCases">2,39,912</div>
+          <div class="stat-sub down">27% Overdue Rate</div>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill fill-orange" style="width:12%"></div></div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-top">
+        <div class="stat-icon purple">
+          <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Resolution Rate</div>
+          <div class="stat-value" id="resolutionRate">73%</div>
+          <div class="stat-sub up">↑ 6% Improved from Month</div>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill fill-purple" style="width:86%"></div></div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT GRID: Left=Dept Ranking, Middle=Trend+Feedback stacked, Right=Overdue -->
+  <div class="content-grid" style="grid-template-columns:1fr 1fr 1fr;align-items:stretch">
+
+    <!-- DEPT PERFORMANCE RANKING -->
+    <div class="card" style="display:flex;flex-direction:column">
+      <div class="card-title">Department Performance Ranking</div>
+      <div class="dept-header">
+        <span>Rank</span>
+        <span>Department</span>
+        <span>Resolution Rate</span>
+        <span>Avg Days</span>
+      </div>
+      <div id="deptTable" style="flex:1"></div>
+    </div>
+
+    <!-- MIDDLE COLUMN: Trend + Feedback stacked -->
+    <div style="display:flex;flex-direction:column;gap:20px">
+
+      <!-- MONTHLY RESOLUTION TREND -->
+      <div class="card">
+        <div class="card-title">Monthly Resolution Trend <span>(Last 6 Months)</span></div>
+        <div class="chart-wrap">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+
+      <!-- PUBLIC FEEDBACK -->
+      <div class="card" style="flex:1">
+        <div class="card-title">Public Feedback</div>
+        <div class="gauge-wrap">
+          <canvas id="gaugeChart" width="220" height="130" style="display:block;margin:0 auto"></canvas>
+          <div class="gauge-score" style="margin-top:-6px">
+            <span class="big">4.2</span><span class="of5">/5</span>
+          </div>
+          <div class="stars-row" id="starsRow"></div>
+          <div class="review-count">Based on 5,200+ Reviews</div>
+          <button class="view-btn" onclick="openFeedbackModal()">View All Feedback</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: Overdue Complaints -->
+    <div class="card" style="display:flex;flex-direction:column">
+      <div class="card-title">Overdue Complaints Breakdown</div>
+      <div id="overdueList"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// ===================== ICONS =====================
+const icons = {
+  "public-works":'<svg viewBox="0 0 24 24"><path d="M13.783 15.172l2.121-2.121 5.996 5.996-2.121 2.121zM17.5 10c1.93 0 3.5-1.57 3.5-3.5 0-.58-.16-1.12-.41-1.6l-2.7 2.7-1.49-1.49 2.7-2.7C16.12 3.16 15.58 3 15 3c-1.93 0-3.5 1.57-3.5 3.5 0 .41.08.8.21 1.16l-1.85 1.85-1.78-1.78.71-.71L7.38 5.61 9.5 3.49a3 3 0 0 0-4.24 0L1.72 7.03l1.41 1.41H0v13h13l.23-.23 7.48-7.48-2.82-2.82L17 9.99A3.5 3.5 0 0 0 17.5 10z"/></svg>',
+  "water":'<svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>',
+  "electricity":'<svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>',
+  "road-safety":'<svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>',
+  "sanitation":'<svg viewBox="0 0 24 24"><path d="M21 8h-2.19l-1.31-3.93c-.28-.84-1.06-1.41-1.95-1.41H8.45c-.89 0-1.67.57-1.95 1.41L5.19 8H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h18c.55 0 1-.45 1-1V9c0-.55-.45-1-1-1zM20 20H4v-9h16v9z"/></svg>',
+  "health":'<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
+  "education":'<svg viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>',
+  "transportation":'<svg viewBox="0 0 24 24"><path d="M4 16c0 .88.39 1.67 1 2.22V20c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h8v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4s-8 .5-8 4v10zm3.5 1c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6H6V6h12v5z"/></svg>',
+  "other":'<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>'
+};
+
+// ===================== FULL DATA PER YEAR/MONTH =====================
+const allData = {
+  2026: {
+    all: {
+      totalComplaints:897567, resolved:657655, rating:4.2,
+      trend:{ labels:['Jan','Feb','Mar','Apr','May','Jun'], resolved:[82,84,86,88,90,93], filed:[80,83,85,87,89,91], line:[80.5,82,83.5,85.5,87.5,91] },
+      departments:[
+        { name:"Public Works",   icon:"public-works",  resRate:80.6, days:3.0, overdueRate:15 },
+        { name:"Water Supply",   icon:"water",          resRate:82.1, days:3.2, overdueRate:9  },
+        { name:"Electricity",    icon:"electricity",    resRate:80.7, days:4.4, overdueRate:14 },
+        { name:"Road Safety",    icon:"road-safety",    resRate:81.1, days:5.8, overdueRate:27 },
+        { name:"Sanitation",     icon:"sanitation",     resRate:70.0, days:2.5, overdueRate:8  },
+        { name:"Health",         icon:"health",         resRate:84.2, days:6.2, overdueRate:11 },
+        { name:"Education",      icon:"education",      resRate:83.7, days:4.8, overdueRate:18 },
+        { name:"Transportation", icon:"transportation", resRate:76.0, days:5.5, overdueRate:20 },
+        { name:"Other",          icon:"other",          resRate:68.0, days:7.0, overdueRate:30 }
+      ]
+    },
+    1:{ totalComplaints:68400, resolved:47880, rating:3.9,
+      trend:{ labels:['Week1','Week2','Week3','Week4'], resolved:[74,76,75,77], filed:[72,74,73,75], line:[73,75,74,76] },
+      departments:[
+        { name:"Public Works",   icon:"public-works",  resRate:74.2, days:3.5, overdueRate:18 },
+        { name:"Water Supply",   icon:"water",          resRate:76.0, days:3.8, overdueRate:12 },
+        { name:"Electricity",    icon:"electricity",    resRate:73.5, days:4.9, overdueRate:17 },
+        { name:"Road Safety",    icon:"road-safety",    resRate:70.0, days:6.2, overdueRate:30 },
+        { name:"Sanitation",     icon:"sanitation",     resRate:62.0, days:3.0, overdueRate:10 },
+        { name:"Health",         icon:"health",         resRate:78.0, days:6.8, overdueRate:14 },
+        { name:"Education",      icon:"education",      resRate:77.5, days:5.2, overdueRate:22 },
+        { name:"Transportation", icon:"transportation", resRate:68.0, days:6.0, overdueRate:25 },
+        { name:"Other",          icon:"other",          resRate:60.0, days:7.5, overdueRate:35 }
+      ]},
+    2:{ totalComplaints:72100, resolved:51912, rating:4.0,
+      trend:{ labels:['Week1','Week2','Week3','Week4'], resolved:[76,78,77,79], filed:[74,76,75,77], line:[75,77,76,78] },
+      departments:[
+        { name:"Public Works",   icon:"public-works",  resRate:75.0, days:3.3, overdueRate:16 },
+        { name:"Water Supply",   icon:"water",          resRate:77.2, days:3.5, overdueRate:11 },
+        { name:"Electricity",    icon:"electricity",    resRate:74.8, days:4.6, overdueRate:15 },
+        { name:"Road Safety",    icon:"road-safety",    resRate:72.0, days:6.0, overdueRate:28 },
+        { name:"Sanitation",     icon:"sanitation",     resRate:64.5, days:2.8, overdueRate:9  },
+        { name:"Health",         icon:"health",         resRate:79.5, days:6.5, overdueRate:13 },
+        { name:"Education",      icon:"education",      resRate:78.0, days:5.0, overdueRate:20 },
+        { name:"Transportation", icon:"transportation", resRate:70.0, days:5.8, overdueRate:22 },
+        { name:"Other",          icon:"other",          resRate:62.0, days:7.2, overdueRate:32 }
+      ]},
+    3:{ totalComplaints:75300, resolved:55470, rating:4.1,
+      trend:{ labels:['Week1','Week2','Week3','Week4'], resolved:[78,80,79,81], filed:[76,78,77,79], line:[77,79,78,80] },
+      departments:[
+        { name:"Public Works",   icon:"public-works",  resRate:77.0, days:3.2, overdueRate:15 },
+        { name:"Water Supply",   icon:"water",          resRate:79.0, days:3.3, overdueRate:10 },
+        { name:"Electricity",    icon:"electricity",    resRate:76.5, days:4.5, overdueRate:14 },
+        { name:"Road Safety",    icon:"road-safety",    resRate:74.0, days:5.9, overdueRate:27 },
+        { name:"Sanitation",     icon:"sanitation",     resRate:66.0, days:2.7, overdueRate:9  },
+        { name:"Health",         icon:"health",         resRate:81.0, days:6.4, overdueRate:12 },
+        { name:"Education",      icon:"education",      resRate:80.0, days:4.9, overdueRate:19 },
+        { name:"Transportation", icon:"transportation", resRate:72.0, days:5.6, overdueRate:21 },
+        { name:"Other",          icon:"other",          resRate:64.0, days:7.1, overdueRate:31 }
+      ]},
+    4:{ totalComplaints:78900, resolved:58900, rating:4.1,
+      trend:{ labels:['Week1','Week2','Week3','Week4'], resolved:[80,82,81,83], filed:[78,80,79,81], line:[79,81,80,82] },
+      departments:[
+        { name:"Public Works",   icon:"public-works",  resRate:78.5, days:3.1, overdueRate:15 },
+        { name:"Water Supply",   icon:"water",          resRate:80.5, days:3.2, overdueRate:10 },
+        { name:"Electricity",    icon:"electricity",    resRate:78.0, days:4.4, overdueRate:14 },
+        { name:"Road Safety",    icon:"road-safety",    resRate:75.5, days:5.8, overdueRate:27 },
+        { name:"Sanitation",     icon:"sanitation",     resRate:67.5, days:2.6, overdueRate:8  },
+        { name:"Health",         icon:"health",         resRate:82.5, days:6.3, overdueRate:11 },
+        { name:"Education",      icon:"education",      resRate:81.5, days:4.8, overdueRate:18 },
+        { name:"Transportation", icon:"transportation", resRate:73.5, days:5.5, overdueRate:20 },
+        { name:"Other",          icon:"other",          resRate:65.5, days:7.0, overdueRate:30 }
+      ]},
+    5:{ totalComplaints:81200, resolved:61710, rating:4.2,
+      trend:{ labels:['Week1','Week2','Week3','Week4'], resolved:[82,84,83,85], filed:[80,82,81,83], line:[81,83,82,84] },
+      departments:[
+        { name:"Public Works",   icon:"public-works",  resRate:79.8, days:3.0, overdueRate:15 },
+        { name:"Water Supply",   icon:"water",          resRate:81.8, days:3.2, overdueRate:9  },
+        { name:"Electricity",    icon:"electricity",    resRate:79.5, days:4.4, overdueRate:14 },
+        { name:"Road Safety",    icon:"road-safety",    resRate:77.0, days:5.8, overdueRate:27 },
+        { name:"Sanitation",     icon:"sanitation",     resRate:68.8, days:2.5, overdueRate:8  },
+        { name:"Health",         icon:"health",         resRate:83.8, days:6.2, overdueRate:11 },
+        { name:"Education",      icon:"education",      resRate:82.8, days:4.8, overdueRate:18 },
+        { name:"Transportation", icon:"transportation", resRate:75.0, days:5.5, overdueRate:20 },
+        { name:"Other",          icon:"other",          resRate:67.0, days:7.0, overdueRate:30 }
+      ]},
+    6:{ totalComplaints:84500, resolved:64690, rating:4.2,
+      trend:{ labels:['Week1','Week2','Week3','Week4'], resolved:[84,86,85,87], filed:[82,84,83,85], line:[83,85,84,86] },
+      departments:[
+        { name:"Public Works",   icon:"public-works",  resRate:80.6, days:3.0, overdueRate:15 },
+        { name:"Water Supply",   icon:"water",          resRate:82.1, days:3.2, overdueRate:9  },
+        { name:"Electricity",    icon:"electricity",    resRate:80.7, days:4.4, overdueRate:14 },
+        { name:"Road Safety",    icon:"road-safety",    resRate:81.1, days:5.8, overdueRate:27 },
+        { name:"Sanitation",     icon:"sanitation",     resRate:70.0, days:2.5, overdueRate:8  },
+        { name:"Health",         icon:"health",         resRate:84.2, days:6.2, overdueRate:11 },
+        { name:"Education",      icon:"education",      resRate:83.7, days:4.8, overdueRate:18 },
+        { name:"Transportation", icon:"transportation", resRate:76.0, days:5.5, overdueRate:20 },
+        { name:"Other",          icon:"other",          resRate:68.0, days:7.0, overdueRate:30 }
+      ]}
+  },
+  2025: {
+    all: {
+      totalComplaints:743200, resolved:512808, rating:3.8,
+      trend:{ labels:['Jan','Feb','Mar','Apr','May','Jun'], resolved:[74,76,78,80,82,85], filed:[72,74,76,78,80,83], line:[73,75,77,79,81,84] },
+      departments:[
+        { name:"Public Works",   icon:"public-works",  resRate:72.0, days:3.8, overdueRate:20 },
+        { name:"Water Supply",   icon:"water",          resRate:74.5, days:4.0, overdueRate:14 },
+        { name:"Electricity",    icon:"electricity",    resRate:71.8, days:5.0, overdueRate:19 },
+        { name:"Road Safety",    icon:"road-safety",    resRate:68.0, days:6.5, overdueRate:32 },
+        { name:"Sanitation",     icon:"sanitation",     resRate:60.0, days:3.2, overdueRate:13 },
+        { name:"Health",         icon:"health",         resRate:76.0, days:7.0, overdueRate:16 },
+        { name:"Education",      icon:"education",      resRate:75.0, days:5.5, overdueRate:24 },
+        { name:"Transportation", icon:"transportation", resRate:65.0, days:6.2, overdueRate:28 },
+        { name:"Other",          icon:"other",          resRate:55.0, days:8.0, overdueRate:38 }
+      ]
+    }
+  },
+  2024: {
+    all: {
+      totalComplaints:612400, resolved:385812, rating:3.5,
+      trend:{ labels:['Jan','Feb','Mar','Apr','May','Jun'], resolved:[66,68,70,72,74,77], filed:[64,66,68,70,72,75], line:[65,67,69,71,73,76] },
+      departments:[
+        { name:"Public Works",   icon:"public-works",  resRate:64.0, days:4.5, overdueRate:26 },
+        { name:"Water Supply",   icon:"water",          resRate:66.5, days:4.8, overdueRate:18 },
+        { name:"Electricity",    icon:"electricity",    resRate:63.8, days:5.8, overdueRate:24 },
+        { name:"Road Safety",    icon:"road-safety",    resRate:60.0, days:7.2, overdueRate:38 },
+        { name:"Sanitation",     icon:"sanitation",     resRate:52.0, days:3.8, overdueRate:17 },
+        { name:"Health",         icon:"health",         resRate:68.0, days:7.8, overdueRate:20 },
+        { name:"Education",      icon:"education",      resRate:67.0, days:6.2, overdueRate:30 },
+        { name:"Transportation", icon:"transportation", resRate:57.0, days:7.0, overdueRate:34 },
+        { name:"Other",          icon:"other",          resRate:47.0, days:9.0, overdueRate:45 }
+      ]
+    }
+  }
+};
+
+// ===================== CHART INSTANCE =====================
+let trendChart = null;
+
+// ===================== DRAW GAUGE =====================
+function drawGauge(rating) {
+  const canvas = document.getElementById('gaugeChart');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const cx = W/2, cy = H-8;
+  const R = Math.min(W*0.44,(H-8)*0.97);
+  const r = R*0.62;
+  const segments = [
+    {from:Math.PI, to:Math.PI*1.25, color:'#ef4444'},
+    {from:Math.PI*1.25, to:Math.PI*1.5, color:'#f97316'},
+    {from:Math.PI*1.5, to:Math.PI*1.75, color:'#f59e0b'},
+    {from:Math.PI*1.75, to:Math.PI*2, color:'#10b981'},
+  ];
+  const gap=0.05;
+  segments.forEach(s=>{
+    ctx.beginPath();
+    ctx.arc(cx,cy,R,s.from+gap,s.to-gap);
+    ctx.arc(cx,cy,r,s.to-gap,s.from+gap,true);
+    ctx.closePath();
+    ctx.fillStyle=s.color;
+    ctx.fill();
+  });
+  const needleAngle = Math.PI+(rating/5)*Math.PI;
+  const needleLen = R*0.78;
+  ctx.save();
+  ctx.translate(cx,cy);
+  ctx.rotate(needleAngle);
+  ctx.beginPath();
+  ctx.moveTo(0,-3.5);
+  ctx.lineTo(needleLen,-1.2);
+  ctx.lineTo(needleLen,1.2);
+  ctx.lineTo(0,3.5);
+  ctx.closePath();
+  ctx.fillStyle='#1e293b';
+  ctx.fill();
+  ctx.restore();
+  ctx.beginPath(); ctx.arc(cx,cy,9,0,Math.PI*2); ctx.fillStyle='#1e293b'; ctx.fill();
+  ctx.beginPath(); ctx.arc(cx,cy,4.5,0,Math.PI*2); ctx.fillStyle='white'; ctx.fill();
+}
+
+// ===================== RENDER STARS =====================
+function renderStars(rating) {
+  const starsRow = document.getElementById('starsRow');
+  starsRow.innerHTML = '';
+  for(let i=1;i<=5;i++){
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('class','star-svg');
+    svg.setAttribute('viewBox','0 0 24 24');
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d','M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z');
+    path.setAttribute('class', i <= Math.round(rating) ? 'star-full' : 'star-empty');
+    svg.appendChild(path);
+    starsRow.appendChild(svg);
+  }
+}
+
+// ===================== MAIN RENDER =====================
+function renderDashboard() {
+  const year = parseInt(document.getElementById('yearFilter').value);
+  const month = document.getElementById('monthFilter').value;
+
+  const yearData = allData[year];
+  const d = (month !== 'all' && yearData[month]) ? yearData[month] : yearData.all;
+
+  const total = d.totalComplaints;
+  const resolved = d.resolved;
+  const pending = total - resolved;
+  const resRate = Math.round((resolved / total) * 100);
+  const pendingRate = Math.round((pending / total) * 100);
+
+  // ---- Stat Cards ----
+  document.getElementById('totalComplaints').textContent = total.toLocaleString('en-IN');
+  document.getElementById('totalResolved').textContent   = resolved.toLocaleString('en-IN');
+  document.getElementById('pendingCases').textContent    = pending.toLocaleString('en-IN');
+  document.getElementById('resolutionRate').textContent  = resRate + '%';
+
+  // Update sub-labels
+  document.querySelector('#totalResolved').closest('.stat-info').querySelector('.stat-sub').textContent = resRate + '% Resolved Rate';
+  document.querySelector('#pendingCases').closest('.stat-info').querySelector('.stat-sub').textContent  = pendingRate + '% Overdue Rate';
+  document.querySelector('#resolutionRate').closest('.stat-info').querySelector('.stat-sub').textContent= '↑ Improved from last month';
+
+  // ---- Department Table ----
+  const deptTable = document.getElementById('deptTable');
+  deptTable.innerHTML = '';
+  const sorted = [...d.departments].sort((a,b)=>b.resRate-a.resRate);
+  sorted.forEach((dept,i)=>{
+    const rank=i+1;
+    const rankClass=rank<=3?`rank-${rank}`:'rank-other';
+    const rankText=rank<=3?['🥇','🥈','🥉'][i]:rank;
+    const rateClass=dept.resRate>=85?'excellent':dept.resRate>=80?'good':dept.resRate>=75?'avg':'poor';
+    const barColor=dept.resRate>=85?'#10b981':dept.resRate>=80?'#2563eb':dept.resRate>=75?'#f97316':'#ef4444';
+    const row=document.createElement('div');
+    row.className='dept-row';
+    row.innerHTML=`
+      <div class="rank-badge ${rankClass}">${rankText}</div>
+      <div class="dept-name-cell">
+        <div class="dept-icon icon-${dept.icon}">${icons[dept.icon]}</div>
+        <div class="dept-name-text">${dept.name}</div>
+      </div>
+      <div class="rate-wrap">
+        <span class="rate-pct ${rateClass}">${dept.resRate.toFixed(0)}%</span>
+        <div class="rate-bar"><div class="rate-bar-fill" style="width:${dept.resRate}%;background:${barColor}"></div></div>
+      </div>
+      <div class="days-badge">${dept.days} Days</div>`;
+    deptTable.appendChild(row);
+  });
+
+  // ---- Trend Chart ----
+  const t = d.trend;
+  if(trendChart){ trendChart.destroy(); }
+  const trendCtx = document.getElementById('trendChart').getContext('2d');
+  trendChart = new Chart(trendCtx,{
+    type:'bar',
+    data:{
+      labels: t.labels,
+      datasets:[
+        {
+          type:'line',
+          label:'Trend',
+          data:t.line,
+          borderColor:'#f97316',
+          backgroundColor:'transparent',
+          borderWidth:2.5,
+          pointBackgroundColor:'white',
+          pointBorderColor:'#f97316',
+          pointBorderWidth:2,
+          pointRadius:5,
+          tension:.45,
+          order:0
+        },
+        {
+          type:'bar',
+          label:'Resolved',
+          data:t.resolved,
+          backgroundColor:'#10b981',
+          borderRadius:{topLeft:4,topRight:4,bottomLeft:0,bottomRight:0},
+          barPercentage:1.0,
+          categoryPercentage:.55,
+          order:1
+        },
+        {
+          type:'bar',
+          label:'Filed',
+          data:t.filed,
+          backgroundColor:'#3b82f6',
+          borderRadius:{topLeft:4,topRight:4,bottomLeft:0,bottomRight:0},
+          barPercentage:1.0,
+          categoryPercentage:.55,
+          order:1
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},
+      scales:{
+        y:{
+          min:78, max:96,
+          ticks:{callback:v=>v+'%', font:{size:10}, color:'#94a3b8'},
+          grid:{color:'#f1f5f9'},
+          border:{display:false}
+        },
+        x:{
+          ticks:{font:{size:10}, color:'#64748b'},
+          grid:{display:false},
+          border:{display:false}
+        }
+      }
+    }
+  });
+
+  // ---- Gauge & Rating ----
+  document.querySelector('.gauge-score .big').textContent = d.rating.toFixed(1);
+  drawGauge(d.rating);
+  renderStars(d.rating);
+
+  // ---- Overdue List ----
+  const overdueList = document.getElementById('overdueList');
+  overdueList.innerHTML='';
+  const oiMap={water:'oi-water',electricity:'oi-electricity',transportation:'oi-transport',"road-safety":'oi-roads',health:'oi-health',sanitation:'oi-sanitation',education:'oi-education',other:'oi-other',"public-works":'oi-health'};
+  sorted.forEach(dept=>{
+    const pct=dept.overdueRate;
+    const colorClass=pct<=10?'ob-green':pct<=15?'ob-yellow':pct<=25?'ob-orange':'ob-red';
+    const oiClass=oiMap[dept.icon]||'oi-other';
+    const row=document.createElement('div');
+    row.className='overdue-row';
+    row.innerHTML=`
+      <div class="overdue-icon ${oiClass}">${icons[dept.icon]}</div>
+      <div class="overdue-name">${dept.name}</div>
+      <div class="overdue-pct">${pct}% Overdue</div>
+      <div class="overdue-bar"><div class="ob-fill ${colorClass}" style="width:${pct*3}%"></div></div>`;
+    overdueList.appendChild(row);
+  });
+}
+
+// ===================== COMPARE MODAL =====================
+function openCompare() {
+  const year = parseInt(document.getElementById('yearFilter').value);
+  const prevYear = year - 1;
+
+  if (!allData[prevYear]) {
+    alert(`No data available for ${prevYear} to compare.`);
+    return;
+  }
+
+  const currData = allData[year].all;
+  const prevData = allData[prevYear].all;
+
+  // Update modal header
+  document.getElementById('modalTitle').textContent = 'Year-over-Year Comparison';
+  document.getElementById('modalSub').textContent = `${year} vs ${prevYear}`;
+
+  // Summary cards
+  const currRate = Math.round((currData.resolved / currData.totalComplaints) * 100);
+  const prevRate = Math.round((prevData.resolved / prevData.totalComplaints) * 100);
+  const rateChange = currRate - prevRate;
+  const complaintChange = Math.round(((currData.totalComplaints - prevData.totalComplaints) / prevData.totalComplaints) * 100);
+  const resolvedChange = Math.round(((currData.resolved - prevData.resolved) / prevData.resolved) * 100);
+
+  function changeHtml(val, suffix='%') {
+    if(val > 0) return `<div class="ms-change ms-up">▲ +${val}${suffix} vs ${prevYear}</div>`;
+    if(val < 0) return `<div class="ms-change ms-down">▼ ${val}${suffix} vs ${prevYear}</div>`;
+    return `<div class="ms-change ms-neutral">No change</div>`;
+  }
+
+  document.getElementById('modalSummary').innerHTML = `
+    <div class="ms-card">
+      <div class="ms-label">Resolution Rate</div>
+      <div class="ms-value">${currRate}%</div>
+      ${changeHtml(rateChange, ' pts')}
+    </div>
+    <div class="ms-card">
+      <div class="ms-label">Total Complaints</div>
+      <div class="ms-value">${currData.totalComplaints.toLocaleString('en-IN')}</div>
+      ${changeHtml(complaintChange)}
+    </div>
+    <div class="ms-card">
+      <div class="ms-label">Cases Resolved</div>
+      <div class="ms-value">${currData.resolved.toLocaleString('en-IN')}</div>
+      ${changeHtml(resolvedChange)}
+    </div>
+  `;
+
+  // Department rows
+  const compareRows = document.getElementById('compareRows');
+  compareRows.innerHTML = '';
+
+  currData.departments.forEach(curr => {
+    const prev = prevData.departments.find(p => p.name === curr.name);
+    if (!prev) return;
+
+    const diff = +(curr.resRate - prev.resRate).toFixed(1);
+    const changeClass = diff > 0 ? 'up' : diff < 0 ? 'down' : 'same';
+    const arrow = diff > 0 ? '▲' : diff < 0 ? '▼' : '●';
+    const changeText = diff > 0 ? `+${diff}%` : `${diff}%`;
+    const barColor = diff > 0 ? '#10b981' : diff < 0 ? '#ef4444' : '#94a3b8';
+    const maxRate = Math.max(curr.resRate, prev.resRate, 1);
+
+    const row = document.createElement('div');
+    row.className = 'compare-row';
+    row.innerHTML = `
+      <div class="cr-dept">
+        <div class="cr-icon icon-${curr.icon}">${icons[curr.icon]}</div>
+        <div class="cr-name">${curr.name}</div>
+      </div>
+      <div class="cr-val cr-prev">${prev.resRate.toFixed(0)}%</div>
+      <div class="cr-val">${curr.resRate.toFixed(0)}%</div>
+      <div class="cr-change ${changeClass}">${arrow} ${changeText}</div>
+      <div class="cr-bar-wrap">
+        <div class="cr-bar">
+          <div class="cr-bar-prev" style="width:${(prev.resRate/100)*100}%"></div>
+          <div class="cr-bar-curr" style="width:${(curr.resRate/100)*100}%;background:${barColor};opacity:.85"></div>
+        </div>
+      </div>
+    `;
+    compareRows.appendChild(row);
+  });
+
+  document.getElementById('compareModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCompare(e) {
+  if (!e || e.target === document.getElementById('compareModal') || e.currentTarget.classList.contains('modal-close')) {
+    document.getElementById('compareModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+// ===================== FILTER LISTENERS =====================
+document.getElementById('yearFilter').addEventListener('change', renderDashboard);
+document.getElementById('monthFilter').addEventListener('change', renderDashboard);
+
+// ===================== INIT =====================
+window.addEventListener('load', renderDashboard);
+
+function openFeedbackModal() {
+  document.getElementById('feedbackModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeFeedbackModal(e, force) {
+  if (force || (e && e.target === document.getElementById('feedbackModal'))) {
+    document.getElementById('feedbackModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+</script>
+
+<!-- FEEDBACK PDF MODAL -->
+<div class="feedback-modal-overlay" id="feedbackModal" onclick="closeFeedbackModal(event)">
+  <div class="feedback-modal-box">
+    <div class="feedback-modal-header">
+      <div class="feedback-modal-title">📋 Sewa Plus Public Citizen Feedback Report</div>
+      <button class="feedback-modal-close" onclick="closeFeedbackModal(null, true)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <iframe class="feedback-pdf-frame" id="feedbackPdfFrame" src="data:application/pdf;base64,JVBERi0xLjQKJZOMi54gUmVwb3J0TGFiIEdlbmVyYXRlZCBQREYgZG9jdW1lbnQgaHR0cDovL3d3dy5yZXBvcnRsYWIuY29tCjEgMCBvYmoKPDwKL0YxIDIgMCBSIC9GMiAzIDAgUgo+PgplbmRvYmoKMiAwIG9iago8PAovQmFzZUZvbnQgL0hlbHZldGljYSAvRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZyAvTmFtZSAvRjEgL1N1YnR5cGUgL1R5cGUxIC9UeXBlIC9Gb250Cj4+CmVuZG9iagozIDAgb2JqCjw8Ci9CYXNlRm9udCAvSGVsdmV0aWNhLUJvbGQgL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcgL05hbWUgL0YyIC9TdWJ0eXBlIC9UeXBlMSAvVHlwZSAvRm9udAo+PgplbmRvYmoKNCAwIG9iago8PAovQ29udGVudHMgMTggMCBSIC9NZWRpYUJveCBbIDAgMCA1OTUuMjc1NiA4NDEuODg5OCBdIC9QYXJlbnQgMTcgMCBSIC9SZXNvdXJjZXMgPDwKL0ZvbnQgMSAwIFIgL1Byb2NTZXQgWyAvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1hZ2VJIF0KPj4gL1JvdGF0ZSAwIC9UcmFucyA8PAoKPj4gCiAgL1R5cGUgL1BhZ2UKPj4KZW5kb2JqCjUgMCBvYmoKPDwKL0NvbnRlbnRzIDE5IDAgUiAvTWVkaWFCb3ggWyAwIDAgNTk1LjI3NTYgODQxLjg4OTggXSAvUGFyZW50IDE3IDAgUiAvUmVzb3VyY2VzIDw8Ci9Gb250IDEgMCBSIC9Qcm9jU2V0IFsgL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSSBdCj4+IC9Sb3RhdGUgMCAvVHJhbnMgPDwKCj4+IAogIC9UeXBlIC9QYWdlCj4+CmVuZG9iago2IDAgb2JqCjw8Ci9Db250ZW50cyAyMCAwIFIgL01lZGlhQm94IFsgMCAwIDU5NS4yNzU2IDg0MS44ODk4IF0gL1BhcmVudCAxNyAwIFIgL1Jlc291cmNlcyA8PAovRm9udCAxIDAgUiAvUHJvY1NldCBbIC9QREYgL1RleHQgL0ltYWdlQiAvSW1hZ2VDIC9JbWFnZUkgXQo+PiAvUm90YXRlIDAgL1RyYW5zIDw8Cgo+PiAKICAvVHlwZSAvUGFnZQo+PgplbmRvYmoKNyAwIG9iago8PAovQ29udGVudHMgMjEgMCBSIC9NZWRpYUJveCBbIDAgMCA1OTUuMjc1NiA4NDEuODg5OCBdIC9QYXJlbnQgMTcgMCBSIC9SZXNvdXJjZXMgPDwKL0ZvbnQgMSAwIFIgL1Byb2NTZXQgWyAvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1hZ2VJIF0KPj4gL1JvdGF0ZSAwIC9UcmFucyA8PAoKPj4gCiAgL1R5cGUgL1BhZ2UKPj4KZW5kb2JqCjggMCBvYmoKPDwKL0NvbnRlbnRzIDIyIDAgUiAvTWVkaWFCb3ggWyAwIDAgNTk1LjI3NTYgODQxLjg4OTggXSAvUGFyZW50IDE3IDAgUiAvUmVzb3VyY2VzIDw8Ci9Gb250IDEgMCBSIC9Qcm9jU2V0IFsgL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSSBdCj4+IC9Sb3RhdGUgMCAvVHJhbnMgPDwKCj4+IAogIC9UeXBlIC9QYWdlCj4+CmVuZG9iago5IDAgb2JqCjw8Ci9Db250ZW50cyAyMyAwIFIgL01lZGlhQm94IFsgMCAwIDU5NS4yNzU2IDg0MS44ODk4IF0gL1BhcmVudCAxNyAwIFIgL1Jlc291cmNlcyA8PAovRm9udCAxIDAgUiAvUHJvY1NldCBbIC9QREYgL1RleHQgL0ltYWdlQiAvSW1hZ2VDIC9JbWFnZUkgXQo+PiAvUm90YXRlIDAgL1RyYW5zIDw8Cgo+PiAKICAvVHlwZSAvUGFnZQo+PgplbmRvYmoKMTAgMCBvYmoKPDwKL0NvbnRlbnRzIDI0IDAgUiAvTWVkaWFCb3ggWyAwIDAgNTk1LjI3NTYgODQxLjg4OTggXSAvUGFyZW50IDE3IDAgUiAvUmVzb3VyY2VzIDw8Ci9Gb250IDEgMCBSIC9Qcm9jU2V0IFsgL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSSBdCj4+IC9Sb3RhdGUgMCAvVHJhbnMgPDwKCj4+IAogIC9UeXBlIC9QYWdlCj4+CmVuZG9iagoxMSAwIG9iago8PAovQ29udGVudHMgMjUgMCBSIC9NZWRpYUJveCBbIDAgMCA1OTUuMjc1NiA4NDEuODg5OCBdIC9QYXJlbnQgMTcgMCBSIC9SZXNvdXJjZXMgPDwKL0ZvbnQgMSAwIFIgL1Byb2NTZXQgWyAvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1hZ2VJIF0KPj4gL1JvdGF0ZSAwIC9UcmFucyA8PAoKPj4gCiAgL1R5cGUgL1BhZ2UKPj4KZW5kb2JqCjEyIDAgb2JqCjw8Ci9Db250ZW50cyAyNiAwIFIgL01lZGlhQm94IFsgMCAwIDU5NS4yNzU2IDg0MS44ODk4IF0gL1BhcmVudCAxNyAwIFIgL1Jlc291cmNlcyA8PAovRm9udCAxIDAgUiAvUHJvY1NldCBbIC9QREYgL1RleHQgL0ltYWdlQiAvSW1hZ2VDIC9JbWFnZUkgXQo+PiAvUm90YXRlIDAgL1RyYW5zIDw8Cgo+PiAKICAvVHlwZSAvUGFnZQo+PgplbmRvYmoKMTMgMCBvYmoKPDwKL0NvbnRlbnRzIDI3IDAgUiAvTWVkaWFCb3ggWyAwIDAgNTk1LjI3NTYgODQxLjg4OTggXSAvUGFyZW50IDE3IDAgUiAvUmVzb3VyY2VzIDw8Ci9Gb250IDEgMCBSIC9Qcm9jU2V0IFsgL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSSBdCj4+IC9Sb3RhdGUgMCAvVHJhbnMgPDwKCj4+IAogIC9UeXBlIC9QYWdlCj4+CmVuZG9iagoxNCAwIG9iago8PAovQ29udGVudHMgMjggMCBSIC9NZWRpYUJveCBbIDAgMCA1OTUuMjc1NiA4NDEuODg5OCBdIC9QYXJlbnQgMTcgMCBSIC9SZXNvdXJjZXMgPDwKL0ZvbnQgMSAwIFIgL1Byb2NTZXQgWyAvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1hZ2VJIF0KPj4gL1JvdGF0ZSAwIC9UcmFucyA8PAoKPj4gCiAgL1R5cGUgL1BhZ2UKPj4KZW5kb2JqCjE1IDAgb2JqCjw8Ci9QYWdlTW9kZSAvVXNlTm9uZSAvUGFnZXMgMTcgMCBSIC9UeXBlIC9DYXRhbG9nCj4+CmVuZG9iagoxNiAwIG9iago8PAovQXV0aG9yIChcKGFub255bW91c1wpKSAvQ3JlYXRpb25EYXRlIChEOjIwMjYwMjE4MDkwMzE2KzAwJzAwJykgL0NyZWF0b3IgKFwodW5zcGVjaWZpZWRcKSkgL0tleXdvcmRzICgpIC9Nb2REYXRlIChEOjIwMjYwMjE4MDkwMzE2KzAwJzAwJykgL1Byb2R1Y2VyIChSZXBvcnRMYWIgUERGIExpYnJhcnkgLSB3d3cucmVwb3J0bGFiLmNvbSkgCiAgL1N1YmplY3QgKFwodW5zcGVjaWZpZWRcKSkgL1RpdGxlIChcKGFub255bW91c1wpKSAvVHJhcHBlZCAvRmFsc2UKPj4KZW5kb2JqCjE3IDAgb2JqCjw8Ci9Db3VudCAxMSAvS2lkcyBbIDQgMCBSIDUgMCBSIDYgMCBSIDcgMCBSIDggMCBSIDkgMCBSIDEwIDAgUiAxMSAwIFIgMTIgMCBSIDEzIDAgUiAKICAxNCAwIFIgXSAvVHlwZSAvUGFnZXMKPj4KZW5kb2JqCjE4IDAgb2JqCjw8Ci9GaWx0ZXIgWyAvQVNDSUk4NURlY29kZSAvRmxhdGVEZWNvZGUgXSAvTGVuZ3RoIDE4NjEKPj4Kc3RyZWFtCkdhdG09aC9EJSsmOmAjNUVLPUNWQmQzNWBbaylBVydQaWdYaFkmXjQ/dS5sNC1WTFRmLWhJPzYqQDJjL1VwM0oyTmZpQ0FyN3IxWE5ebTRcNk4iKGVtc0c8LmI3JmoyQUFDMUtRR0RLJkw9cE03SVdrR1BOIz8vbDZQZCFOY1xpYmhFJD1RYVJfKEE/QVFCZllZIyNpPFE+OUtqQ0lOL1pqRmF0clBjXVY+YyMnSEJFMW8+Y1Q8LXNLYi9MS01ycl5rbj5yVVJNMGApM2BcKF5CaHImaEM0PVYpUDxjXjJNYzAoIV89JXV0KFdAMz1PZlF1UWNpTG9PYT03VFQrNF1XOjRiUSltJUFNdDwvcUQuLCVIQl1PZi9PMEJuNURtc11COC0sR2deY1JBWzNcOzFCS290TWNoOEpoXV9ManUhbFkvKi1qSWYmXS88QWNjSXVMUFlAUUBpTzVtZmgjZU9XZlZJMWxNTUU3KDwqU3RxSjM0YUQrSmIiYWkvYktoRXI4KVN1LzlhcGczcFxxZlZiK21KL21WTTohQ1FIRl9ANm8zcThcTEg0bmI7P1BPRyddKykqSXFLcjtpOENPZ10uPTJAbW5CREwtMjZSR2VmY1wtKC5MR0xGIzM7dEdAUVo/Wy0mcl1vLmotcixfcUpNSVU/P0RuYFhdXlVXRGFgMylYYy9iIW5jO0lSc04rSF5uNiw5N0soS2BKNVM6c08jMjNUOmYxX0NncCRsMC51RnNXPko8Ii8nQiQrVWhCV3BYMWc+VCpjLWk6QkZxO14rZE1qQW5hOmlMWktvcCFIMTs+bVpNOzA2S0xqX2klaVM5dD4nb0ombDQwL0knaVtRIUQsImxMJihoOiNWXE9sYWdoQjBII2Jxb2d0QVlDK0o1S1wuZCt0OUxkckEuRV8oLU8tYnFeZXRfNigwRlspSVtXVC5GPCpkPjhCSkcqOkNiX0dcaCxTM2huMjBJUm07cmIrZDc5bl1SZyhLIXBkVUwzNW8+SUMrUT1VMTs5OzM7S0sySVJYPWc0I0hWbDg6MS5eRCNUYiIybmMkRVo1cEk6PlU3aGhTUWBhRjghTC8+aCRYImdjKCojZzM0Jl8nSUBmO2okQ2VDM0NISTQuUzQtUUgzXlc/MypnKHBrTS44YG0qJ19PTmozN2JnU0luJ0omIUtcSzMrV2JqXD5SJkdNckBRRlJjYWhPY0ZfQF00OVxDNGg+Mms7RWtDXlIjYjBOY204WElGTnFSO1FpYTlaS0RFNyEwaywzTHA4KV1ybz5LaDxSMTlEV19KayxUVTw4SCdYUlk6UFRLTm1MVGZoNlg7QExpOVAhSy5hXT43cVltOWBXU0dAJl10Z2RkVnU4UTM0VC41JmtsUWI1YCZTdEhvLDM8ZCRiKkZqYHJnTVFDL2EpQmxEdHA7cE4paE4lXyNBXHBDY1dQSTQlSl8tUmhWcFgvTjIxXE1vVXBCVSEwWyY7KXVNWThdSydrViUmUCcjJjJzaFNpXF1WWFk3LTNlNF8iLFFrPHQ5VEM9Wi9mXUwoNHArOiUhPyFSKCpaOEFSXFAvQ04jNkFRMCpzPGlEU0lTc09jQSFJY25QUEFwVDJAO1ozXG5OLUc+ZjE7a2BSLFlJUV11MU8hIykwNm1nK2EmbipXbVFQMnNjPmszLWBTPzUpRSRiRkZoZjgwX1BkZXMzI2wtUGlcOT4jWCZsK0RHLjNxIkYlJnNzWmZTNEUiaTE3NGdZK0BzbFwzVDlyUkRdWklwMklUb1BZWSFXVjIlOT4wLkhhdWg4YWM8S2NMVDFeOlA9I2RZVGo8OEJAQC5QQlBXcEZnUjlmZFQxdS0mLnRsRjRWVGZiOV1PX1o6b2MnTUNmWGA/ZDt0X2JfP2FMLFxtIjVmNG5cOHEmS01OKzRwUmlrV2QxPU51YVQhWTQkJy5VYXBUdWk/QGhWYFtxWEBiYltXVWEjbEtpViJPKEFRRjQtazAhRzNdJ0FiV3EzJ0Q1O3FMNTkkZ3MraVBNS2NpYEAvV1RVUihxbl8namw1RmBqKzBHNiJMPyFXVks+LyFbP25OaFAnOiw5V3FMLTBIZ1w6OTAzSCNZMWwvYjhTVidlPVduJytANWhMK04nITM/KTZKPlNwUGprK1NGSEZPMj1YOlpoOi9NOClhM0A/RldRNWRpXjc+ZVRwU2Y0Yy8vMm5rPjIuYTwpPWpyVnM3ViM2bj10ViU4Uk5jV0tPPlRhOERGVzI2QVtzNm1lIS90NkE1LSFnYks2M00vMnNyZV9PV1FVUDtRJztERlcyNkFbcitNZSEvcmBBNS0hZ2JLLS1MTHMkLjJWQ0JeNWFkVChYMl5ONy5aSjpoS0MhKEhWPWpyVnNMPVRQPFpXPDBtQFY3Mjk7cVwqOUNrN1E9Y3UuZ2BNRFteWVAwQ1I2bFxTb2xFYnFBXD9Qb2B0OGVnQ0xlX0VGO2I0I2BKY01lJnVdcmI/fj5lbmRzdHJlYW0KZW5kb2JqCjE5IDAgb2JqCjw8Ci9GaWx0ZXIgWyAvQVNDSUk4NURlY29kZSAvRmxhdGVEZWNvZGUgXSAvTGVuZ3RoIDE3NzQKPj4Kc3RyZWFtCkdhdG09OWxvJkkmQUBzQmk3TVk9LktQVjZIJCVqZlNQNTVdRClGSm8mbkVlbDg7M2swM2tyQi9NJEdLJChrPjs+YHFGYFNGcnFMOF9aclYlVS1FYnReIk8raWdRTUwyTChfWU1FXk9OTzhCTEV1bnA1VE9qYXBaSDVvMk50IlZLamotcV1XZjBgPylaV1E4IigoNXVuLTlaXEpRNz9XcTNdPVZgdT1DLmRLamMnKygkZHBLMEgpOHVYTysobV9NaWoqKDNwZCZXOjMrMW1FX0NrbVE6JzNYckNpTkxhUltrWydPTWkxPTRMLHE7W24jSWVHPDRLNTYhVHFBXV5aYzBwZUdvNUs8NkNGOT9Lc1guQVUzWF9OUzhGPj8xXEBaSzA1QVJlOW5DVTFwbEQ7LXBOWztFQ1UpSTZ0MCZEPS8sOmkwNTI4RzlbJyopc11CZW1UNipQTFhSLk9YbzgnOj1lOVpDckBEZmYjLkdCRDpHWyUsOmBAJEA1NkI2RHNSQVNxUUkxUENLOFBKWzNnPEVmMlM1Uy0oQ1RXb0c6cExdcERHSF1Dbk82aD8jc3NiJyFgI3FlOCdCXD9HaUhGODtJaUgpTDlDbTw8RXJYME1dSG09JDBYaHNeNkZYbzs3N0lmVklWSFdgUjRPLTRtUEdDXlpLNVtZLTkzaGlSViNgSDUyV2stZFs/USQsMToidGU5ZkJ1VU5XajhEWzA+WmUtMD5Sa2pYNjQuZERZQ1xKclYwVkA9aSNgRSEmSWdsODk/KUc0NHUkIyZccl9VO08xdFNlbSQ/J14lVipaPFhrcCk8cGIoQkRtVFJ0XW9WWi0pJ19JTD1VY1VsWmN1OTdcRzZwMz00YVRTaGlCaGRbciI0XjpWR1kiQWEwRnEycDVQdC5TY0kkI2AsRjJRL08yRGsmUnJzZT5ncVFLYWReNUkrX1QlY19UL0tbLVtxXkJCOUYtJl5ZdD1COVdWMCIoOjhwNyosIXQ8cktfNVgsJXEnJlJHZD5BUVphYGJTRGxGYEpqckdyX1ozVD1NcXFlOnI8UiJDcGxlMF0wLU5wKFJVUHQzWVRvQWpVakREZXMocyE/WFUlam1CMmFUMUpEJCdLMEQ+VE1VZiZQOUg6SWZCOEIuYCVoVj5LZyYyXVJtc1thRDxOdSldXlc3J0E+WFNdQUlfcGBcJWtvZUBKIyVwLXI9UnRrSi87WVkhXS4uYVVrb1pjWWNoaU0pRUwjTUxNKVo0NEotYDVIa2ZjLVJGSGIvbkhUQ2hHU1MnRDEzYkFOanJeX0NVJD1SVzI3MjBhXF8jKjBOQWZMTT1lO0s3ckFFNHEtZSs2dG0pWV1QQUlaalJWNDBbITs8YWVMPjNRcDRHJz82XTs+XVw7b1JySjlrV2ZUQUxCaUYmN0ZrIk5fRCdWdVImXjY8Wlg9cmxTNz03Ny5zZD1FNV46YWYsLnErXjFOUTZPLT5sRVYqRG8tPWhSQScoSW9vLjphPThgJUBfbFYpJTUsMCtdX0pkXyJTIjhzTkF0Vy5ga3MkLzBsdFlcYTpocDMlPlltUixlUm1wMU9II2JVQS0jQSZKOjtUNjNLZF1SK1tgSTs5VEAtI1RKal9jLDg5bzBRU1RWbyMtQSdCYERzP1pgcCRQM1JcITlrcCI8VGtfUHFqaUw7WVhvMmYlKU1IMlw8XVBBNFhAO1EqJj9QMnAwRCdMN2VwZWNxLG1EcVc+RVZMcVhIcChOTSQ9JjduRC9sRk9cTicrWlwmSEFyN05QVUBMITlTPmlSSFYqKnFQW0tpWyo5J0RWRCFwWm0udWBfVlxQJUYpQk9eTTRNczpoTmBmQGhJak4wYSlCR0QydWgsPVhSR2YtVmkrITBjci8ycVZna28tPzdcKTNsRnAnTU5vLWNSWCFUY2gycFxsanE5Rz0jKnJUWD9OJWxSRnFlNVMuIWo9cz1hJnFOTEtHIS87P251IidWQCwhQixBWG8oUy80WFlqImtJOEMkM3RNYS4qb1Flcz5vSmYxTExGViRwW0lfNC1fUi0iQXM9NVhpXDVoQCs1P0VvJUxIYGM+QWkySWVhY2luMENyPj9aUiU9TypDZ2J1aThcSl4lPEJiSkBlPlM8bmlQPVJia29DclVMJSFCK0ZKRFtuWzgzSCM2X0BsWjFFUyRBSkJFR1dhSk4+NWhXUUxiSGYpOVs6XVlTa1cwM1M5O1BdRywyJUpzVmQyMVJAVko/byssP2skVSEybzs1bk9RTGNsOSk5Wzo9YS1JXnQ4cyM7Qy9jZEdBMWRnJSQzVS91YEtoIVxTIjw9MlwmdVJbZGAoPUlcNiNIJjNVcC9wUTI+Y0onbk8ici4jQjYsQkBmfj5lbmRzdHJlYW0KZW5kb2JqCjIwIDAgb2JqCjw8Ci9GaWx0ZXIgWyAvQVNDSUk4NURlY29kZSAvRmxhdGVEZWNvZGUgXSAvTGVuZ3RoIDE3NzUKPj4Kc3RyZWFtCkdhdG09OWxvJkkmQUBDMmk3TVk9LlI8THBrZGo+SFIzcEQ6QzNrVVw4N2syTiQ7Jm9OSXNoPiklb1VpMz1CUVElbUlnJjs1IUIlKyJYMV5scTIiIyhJKkw6czFcVURaXypsNFI5LiZZNGJcIlZyZjxgU2NNL15PQDlOLkFALzFbVEM/PV4jQTFLVUpAQTguUj1CZEFuQEx0T1ZGMVMsO14+dG8mSVFLQm9bQV0wJDEzR1VLVl4sInM+YSc8ZUhxKjVjVzNvXj9NYjBpdGhmcF9rWVZ1IV0qclEmVENmXi4udC1vakVqRHAsbG09NGNldWVyJ2Jqczg7aFcuLGlZMWE1IiUqSTMwaEhxXFhrXDxHdGprWUJBWUNVJW5dRU1gSkI7LFQvci5aITJDPVtuWDI6bzs2NDxBU2tzOTIsajEicCNUQFk0MTxycjwzTnB1VyIsMFhdcklbSFNSTlxqOSF0Rkc+ZW4lUWJDNipIRUxaKVtaTjFyJ2wjPCRFQiJiMEM9bmNOcV07Qm8mJGhlLjljOUU2XzxmZ1c/YkJbZUM/RjpfUmozaT9UQWJXLidPcyVlNl1XVW4+RFtmOlE0L2teYSImdDxGRUw9cWlgP2Q6I0gpNTc9WS8rTnEpUnAmZ0UwcmxEQiEvYis0ZmFUY2xfYG5ncEVFZEBHQGlWImQyNXNDZF8mTj9CJXNVcUs1WGFJV2wlOVwyLzpPMDtOVHJwMzMuUz9HU0g2cVhvVCxmWXQzO15TSEVybD08UGs4Iic5QDIxZ1VoXDtgKUdpbmskaFgzNlhuS21UPSxBVGoqaFteN1MlQ0BjPFlCPlBPXGJtZSIiI1FdITkxVHUxWjJCZyxyRyVXZXUwWyFIJklhaSFzRl1qSVs+XCh0a2gyRD5JaiFJOmU5XnUnbUlBYlVxUjNeIipCS0c/Smo8Q1hqZVUrQi1WJmdnUl9hSWlyTHJpNV0yZUBdXllUTFZvbVEwSXFCPWRsKC9yRkFrMCclLEc7K3QtJ2gsZS1ZT0YoJz49JUJWKzFWVGMmImFiIjpCMFInc0hEaGhvVGw8KjdCbUVGcV5iI01gOXA4cnImKWk1dEEkPFdHc1xNIzBeLUdqMi9Tb2gjNmc9Ty1lL19JdExCNF1cM2JuZFxhN2tfa15cNGxPZEpWYDNqV3FzYyIuXF5uSiMzTFFrXzA1MDJwXCpSNT4kLF1ZMUI7VDNgYyIiJFtxLWU5MV5sTSVcVWg8MiRBRGEnV2MyWC8mdCtNSilqcE46WD1ALVtWMHJZWWJHSmo/W2IyTFRlc0ZSWSREMylNJ1lvYEhUT1x0dFEzMjMpRClwJWxrN28yXDkxJFlXWHByVjpLb0pjPVcsTkAvaXVwajFGVFVdL2ohIVsjKWQjR0lQOU84aV5xPW4qS2BwSTInRVNPQVUqOW1SIlljOmgtWS9zdC1VYG5wNz9oQGwoIm5qdTJBL2xhJyFRckE6VnRwK1IjPzA9ODQ7YlU1X241RVUwJVFtOXUrRUc9WDBHXWxTNihNN28/ZFZKVS1NKTgqQk1WVEU+al8nPDdDK2wuY10oOEZyRGRnOVNmK2k6W1lKJFhYXjNMOmkwYEoyMkM8PXAtMmAwR2ZjTyclKiVCNyJlMzgsVStlWEA0a2xBT0dObF9NP2xPUScyalJfUUZ0WC0yJWxINyxWRlsmLFUuVkYjMFtHay1BOCFHJjshYTc3Q11qY1gpPkorRXQ/K3FIQVE6bkYpVkFwR15KRT9jdC1iW1VbVzVYOjlTa0hRQ2BMQS9ndD82MTQyLC1ZO3JgRTFINDJHSUlFXjA/ZmA5Z2BOS2QhUjl0KSpvUS4+LS5HOiFbZ1tzPXFNN3BAcjdlV0RLcSkiS2Q+U0xlPUlKYGQsbTo3XiJaaTopTTRhW0VLWGJ0cydda001b3IkcmxISGQlYmdCOEBGRT9VcmxOMzRwPCdBQEM3dHB0a1o8YUdAc28tIm0qajtXYkRjTDI1KjZoZChdVV9gXXFDaThQXzlAc1A5TUc6QVRXLChlRUtuMFM9MVAtcXFdIjJEN1YyWl1EVV1KZyVhW0NlRiJTJGZucUhUJD1cTWZaKypiQm0wbD1qKS4qWVpdLnItLnFSRnBCbi0tJFhRdGRjISZ0bkpeJUJUUnRBbWdoQV8qbD4yQzNMYyEmdUk0Vz9WaTc2MCMlamgyUGFYUUAsJWZXPTJKJm8/Lmk/MylzIl8oLGtzPWopLzVZWl0ucjttOUVKSFhqOV9iQmtKPD1qKTAmQkInNiohYkI5JC5nJmRwMWRoMEQzSTZHWiZLXDMlJm9cOHVhKmVeIV0lTC4rNUxjQEBaRUg/PVcnR1JnY2YpYmdycksnREdYKX4+ZW5kc3RyZWFtCmVuZG9iagoyMSAwIG9iago8PAovRmlsdGVyIFsgL0FTQ0lJODVEZWNvZGUgL0ZsYXRlRGVjb2RlIF0gL0xlbmd0aCAxNzY2Cj4+CnN0cmVhbQpHYXRtPV8vZTlnJkFAQltFLDc9L1BvclZMNE0jRW46OFouP1tbTmRyJCdMRUlVZEB0JmVaVVZraV4kMFQmWVB1SmZOcDVnbWMrcldZYE03RVVnTE0vXiJhN2tiQ11aaUwoWURnYEw+LmFTcmdxW2pSbSFVQU9cNyxWdDVsO1NGQyFaazY5MVJSKGJWWlBcMTpNbzljQG9PY1hqT24wZmtaWl5GZlMvQlxdaVlhRz5WRjQqVWJJXGtNXVFiSThSbzpAWUVGUDcmOE4rQUhAYEtwRkAtVFk3RUlPJ2hJQUZccWgnVXAxcVwjTkMsYikzaW9FcUxRQFQ+KUhcVnBSVk4wZlAoK2hvRSI/NDlqX21Qcm1COD4/UShya2JzN0hgTFBfLVJlQG9wZklePU84KGVrUVdzYGFxOSE2N0FsNW4naTs8X2BFbWNwZztvP2dIUFknMzUicCduUl9KVzInSk1tPHIwOFBzWWxCNVVaKi4uOiNUWDpDMCFQQU9VbjQmb0FDPWdZYm47QjBkQVhrSGBoWGQ1XkhiLzhIOTJVUCRnZy4sIWluai4oWzFLb0hrR1s4SSdmO1BQMiVWSTtjNzFXcz5QdXU4YlxtQ00xPnJPOTZNN3QqMFhbb0B1Wjk0NklEQyU/c05gVFsnXWJhWyFSZWstKUtnam5MQGIlJ2BzK3BNUV9JQltyOylbJFpOajk4VypMNWQyPjZjaHVZNixFTihaZ2lBI18sMmJpKktCX2xSQzAyT25mXyViVmR0aGpVKWIuK3AsXUYtSlZzZWBTQiYhPnErOUJoZlxhaiRpNy8xYktrSytiaio5V2YiLiNOWXAzUCFJaiQiREQ7ckZpQGhzLlVZKF03VyRGKDFtbGkoYkJySTI0K2NgW2B0NyRXXnJAUEtmO1o0UyY/cVBkTydILls9L1tJJTpdP00wQGFOUnFWcUwkYCkwcVxMTSxyMVhHWUs6XmpNSCciU0IzNlFXW2gsZW4/OV9Razw4JT86JE5NdHElTjw6LG1OLmUrY2s3PmNvQTwnbycuZmFaXitZITAyNUBDV2w4MzBjLkxeNUdhKCNKbHJSLzlYRFY6TigxLVYxUEcpbVg4RVNhTlciLj1cdUEySiYwVjRbJyI0ZldUJHQvZm9VOCdMIk1nJltFJEhKP2djaGlpTnVRSyNda1E2P1pPdVZxdCRycTRqcFVaPktJb2cyMSwySUlySEdrVDgsLGRDaF9JI0xXYixKSDVeRmI7MClDI05nXyUvXSxDLiFWRWxFPUFqQUkhUi5BTjVGSjZZVFMjOl1xMmFhVD5jX1pjJENRKWM9QzpyJWsrKi4jPltwQUs9JjlWZz5nLjNIKzU9UzlmTT4kTy83byVbPSFRa18/XFFKczw9TVNFUTxnV0VqXF9AQFJYblBETk80SFNxZmotL2xHLG0tXD90O0cwNVkpTDVKXE9CUihAaFkoaidhYV1jL0lVZjIpWmwiVnRScFVFOll0WiFaOyU+ajVOOGRTNERUR180KTU1dFU8QzVvK09KZ0dPI05GQjZnUWIrVFsjbExdNVpkNyc5KERjKzwxL2QnQXMtWk5OSDR1KzlZcHUpX3FycD5QU3JmPlFaXFY7QWsucUJyViU7QCZVcVdCYWowNWAhW1InNy05bjBza19zIVxxVGJQLCtMJDxkW20qTTNxLnFTdEhJMDBIV2Q0RkFNQ0tPNHVncE1OPjZvJkI/bEdqbHEyNkRjTzQlcVEsb2lVYzIxanRJO15DSVNDaWBrUEVIQjJfOT0oQjBvWTVER0E7XWprWVFodGpbMEYlIWduOXM4YDNScztHPEswLjEuZysxRytFOVdya1k1JjpxU2M4RkFTIzZpTUZKalFhcFs3RWJjSCo/aF9LRlVfal9DbFtnXmk2bWUpJzo9P1NtJCJRLDFxaW9YTSoiYyRwPjwlXDdYOFsycU4hJU5rIkdFZFBwXm1NXVRHJlBJVnVnQWVlLllCXz40Kj9CLGslXDB0dFFhc189LVdoOylYIkFTRiFgLXA/Y0hGJUIvRV1hREFoPCs+XmgsLlxOUFQzWGtEXkhjRkNcJGJZU2tXMDFVJWI/R3VMcGJiQlh1WGJgRD9uWVNkZ1Q8ZS9Gc2NIRiU5L0ViOW5BaDwrPl5oLC5cTlBUM1hrRF5IY0ZDXjtOWVNrVzAzUzk7UF1JREtsamgpIjxgYz5BbTJJalFyJGE6TWxII3AyLWJCWW5KKTlbOj1ZU2tXMEEkP2lvR3BDP0YqU0NkXSdoOWtkLlhvZWhZIUdnU1RtTUc/LzwwaVFeJWBlTDZEcDs9SC1vS0FtYE0zN2ticGFuamozb3BCKV9sSD9aUTh+PmVuZHN0cmVhbQplbmRvYmoKMjIgMCBvYmoKPDwKL0ZpbHRlciBbIC9BU0NJSTg1RGVjb2RlIC9GbGF0ZURlY29kZSBdIC9MZW5ndGggMTc2NQo+PgpzdHJlYW0KR2F0bT05bG8mSSZBQEMyaTdNWT0uUkVScWtkaj5IUjNwRDpDM2tVXDg0R3EuJDsmb25Jc2g+MSVvVWdtISk4SG1wM1FPWCstcWZpSi5zO2xxVSIzcUg7RFU4LytXOU44bl5uIT49K05iNjw6amJmO2xsVyJaPUFRL2kvZTAsVlBLUTs8RjhSO2NmPE1rI21rMkFeJlQ0OVpTdFxuZ0goXV0zRWM3LzFWP3JZYUc+ViRkb0JmSUFQQlZPMUstRU1oKlE/Rk5PcChOKz1wblgkLTo7TEEvIjFyQ0J0XWFRaDxiLigyNT1ZQFRCZSdmQzddYDkqKWA1Q1ltQzo4O0IvQSQwIk9eUTJsXV4oJW1WLkxzLFlwUy4qJWQqVmg2TWBEYCNSTFVLdENXSF4kLEonYTVwOUxbPixPYF1DPDtdPSg4MS9WaGdyX0xYcXMlbltYTVo9W2FDVFNBLm5NcW8qSC5KYFI+PidSYkZXTTdCPyRvP1JMX3NTLmA+X3RTLEsmP1pMMV9iPENtXyRMYkQ5L3JgaFN1Pz5rWVBXYlNAIVFYZUlXajc3LyphZ0kiPkgwJFR0NywwVkhkbGduQS9JKWkuPEZSWlI+QEo0Plc1MWspWm07Q0ZcUmRJNVJxPiU9OiIqdWo0WDslL2RFQjQiOWZYN1FdR0ktTiY8Z2NvK1haMi1fNW1TN1xLXUkyZTVZY18hZ3FZMCtPUE9CR0olYzZndTg9ZmhoYTAvQVgnY2AwVU42KSI2blw2bDlSVVJeWE5rUkJoKz9gLmwhRVBVNCI1VlxoVyNBV1tdJyRKJDBRPFYsPFMnQl4vQCZiPUpMRioiZWMnaW1Pazo/cDpNQFUqRmxWbW1YOlNmNyY0TlEqYlxLaCpYLVtpTiJPUyFbXFZYaFVOQy81TUJeJFxvKFdDXHBgJisvZSMlIWVLZTVAOmo6RHBMLk4mVyQlcjVIbF5OJEQ0PDFCIWtERGYmXlUvUTtAMU5uamg/LTBZWS9JbmlRLjVabmEuSzlkTjw1Szg5Z0ctUkZkUnVIM2A8X2lKWE8zaSwqQT5TNCdpOz0lMGRiTCIiVic6ITlPcFtQMEZgdSYvLFhSOU1HQnViQCVJbzcqQmVrTmRCbW1cTkJMUUcyNiI5VVpGXkxqIjtYTCwmajJCYih1RyIlIm5BVipaTXVKSUE9QXBZQF5lMiVlP0ZLQzowKkFVOlo7PUwhTTklRldMV2ZpRSVybChZWjNYL3UvXFpoOmlwbUVwalZLYlI5Yj5LRWlTVSYubC05WWYmMjE/dE0mZDgvKkJSVEtOYGxlQFctakY1K208O0VLUV1PMEUwTFssZlJsI0JjKTJxaXAlXDVHSmxSQDA1NEZUUklVWDFOU21NUmRlMzksIXRFaT5jLUFnIk8pUSZOSEYrXytpOF4zTjpZaVooTFVpSiIsVD9GLT0/cSFMY0AhImI3Y1JOZVJBJyZQYFVWQGA4ZWY5TiIrIy9YVyFWRTxbYVYuKUErY1QpJFkvKTM0Ki1IZVhSZl1dYmtsWDNbTUo6Rml0XjFLJURAUTM3ayZmbydiJkNiV11TXGQwKWEqVG45LnFyc11sI0YyX1BZIkdkKjJPPlc+OXJjYCJqYlxkVXRLckcrOko0Pz5gOWBtMW1hJFo7JzhLYmV0JC1OME0yRD5zJGwmW08lKEcnc2dWVVlZNiUlJWhhOWg1aVAjOSMpWGRdX3MsMTg2QksqbFE2QD8wP1o+azguJD0/O0BRPGknWE5jIW9BXl1HblZXclo5YC1eTzQjVDttRGM0REFKOlosLVFLWiE6PkQyaVJEVSw7ajU7aytyWSwiLDgqP2tUW1toYHBobkhnJzVHJl83MW5waDg+TW9GbkgrUjA2bm4+ZFNoJSpsJUM5JlBmVUdwQVwydTpaNU4/MzRSb0YqR1ZtZCJRYj9OZFEkVm4hU24hJD1wbk8mXGMqXFJdTidOTmtnbkElNi47cyxIU2JUI2JxQi1YOU9MVl8lLkZHKk0+JTk0TjQzImBJVCgvbnJMVEY3PHRnSDtoJV5iQmFpK0MhMWc0WVxEOiwsS2dqbmZUSDtQZzlUUURDdGMyTydQdUwvPzNXPWRBJWBSbWc0R1pWQCsxRzdrJFpaKG9rJVVcUUx1UzRlIUJbSEArMUc3N1s+VmVaLEhuIVp0NnAyZlgsNScuRzIiPV1hU2AyWjxka3JEOEFrPFlcRDosJGE9P2dIOERkPmJCYWkrQyExZzRZXEQ6LCxLZ2puZkxoNmotYSJGZ3E6UTFdJ0JKTCRnMDhnQUBTKz9pTGJIJWBbKDctPyhTKkJyWURnJk46J3JnWnJaIis0bksxNjJFRyN+PmVuZHN0cmVhbQplbmRvYmoKMjMgMCBvYmoKPDwKL0ZpbHRlciBbIC9BU0NJSTg1RGVjb2RlIC9GbGF0ZURlY29kZSBdIC9MZW5ndGggMTc2Ngo+PgpzdHJlYW0KR2F0bT1fL2U5ZyZBQEJbRSw3PS9Qb3I+RDRNI0VuOjhaLj9bW05kciQnTEVJVWRAdCZlWlVWa0BUUS8/Ii1CSk8zOFE0RG1fXSwnISlUQzgwZ0JkVEdJXSRcUU5kM1wlNCpoV01gJTJVY0g1J2lucDMlZjE4Pj1eZCE8byk1dCFeZE1HaUxeYldNRnAuV1IvXzRDcVohRVxjZl8sWyFebWMpYGczSCwwZiIuSlxmOVVmQ3QoYit1QC5rLThESSMvXG07KSg0cTgsU3VDaltjRTMqZyQ8dFUsP11DPE1jXGYxZl9jI2ZlXDFyYGVgO11mV3M/MzVyO0ReNjlCSER0Z3BCXCYrMzFtXiMvTDI7Ry1eTUVXcFdbMGFUKj8+Mz5tJSwlM2E0W0E7PkhiMWI1a0pSV2JOQztlQXJBPWcoQiJcI01LTnJHRXAuZV1rZE1cNCNkc29xVytdSSNvPCNINCtgb3BUaUJLNWwmOE5iczRfLSVZc2pmVlMiLGFXcGByJ2xJZyhMWzlhP3JyTStTcW4iZWgtPkI0TVZcITw1JnBiIWIicHA7JCZnYydWOVxQbGQ0bT4oTGVRNXMsLThmbEs+RkYkbU9bNC5wPlgrUy51UWZ0M29oNHEmbmAmYkRhaGl0NT1gdHNZKWteXmcnNzYmTHVGXzwlcz5LXlU4Wmo2LzgzaU9tTytqSmBEYUtDXTttZW9TYTZ0YFRVTXNxT0Ynci1MXTpEJixGPlFjPTAoJ0ZhQ0M8M2AjJTFbSTpsYClfIlYhWWxiZWtKZVxENmwlOEJYLGhbLTAtSyVOTkFDcG9GQ2MwO1RsZik5QUxbci86aV51I25IUHNnRlFAViU7UCs4OiIpPWUpY0o5UWM+OC5gWmo5cFQ9NV48LE5FZ1RaTl1kaTApKSlscDcxZklUUFVQO0suRjlwXipBZC5AWEM4bkwzZCxoUEVabFg+TzdHJy0/R1A+WVdFKm8kRD1oKzRHQTkrWmFNWV8+XSdLKFAhaGZRai5yUV9xLjtmayNtRk5zLGk8J3JPPS9cQyZXdSV1UD8sWCk9QmFnQTVmST1pXWtLK11UP2hTZ0FnIlwkWE1VZ0ZOQmooWk4yK1NOYE04S051SnFbYkVRal1famlLNFQxY2svJCg4JjZuOmNsTTdQbzpPSitxMDFKWTouZVd1UDhuMyI7MjBAKjhvUm8kNiw4QC9cLiFuVVklPlpnMV0ubyZUVHJWM0pkMj9iLUpzUyQ7PmVmQSZVbC9iPzNcIkkwTlpbKVVjWT1jKFwrdUFTJmtQV1wjV2kiIl8wQW9PTWNIRkFoRCNWZEFFOkREPTBuRUhwYmksbzJqc21gR0pTKU5pSWM8WVhUVnBfSGRxbyw2cSJTTnAzblorNEdiLlxoQEtgI1ttZm5AVlxcLHBsR14oajpYbFlsJFMnbGxxTTFwIzU5SVs5XHU2XTstWG48M21eO1gvN1pJaEkqNyd0T2ktQVAkO09NOF1JKl9sbmpjNjQuL3BPXExeOihNJnE0QnJiZnQlV1doaFVgLTJqU1c6QyM9OTNHUjlgKVJvb18kcEtNMlZlSTwrV3JTT09HN0RWLVVNJUFnWT1eVl5UP3IrVnF1SVdbTVVNWFRISDJaKm5GU2ZkYFZmbEZpcWlzKXI2OCM/cF5AQU5qYiU0L1NBS2Y6QlJDXyEvbXRpKFt0QWQiaD0lVEknZSR0bEZ1ZFkpanRHYls+SzVJIzcyYkc0I0ZXNyNNZldEWiwjayUlSHNmKjdaaF8ucGMvW11ALEA2P1c/KENfWVQyJUlxZT40PmRCJ15ZbEdeWFMyaW5xYCdrWmAwKG05IVZtcTlTQ1BjUiU6bzs+U1Q5SVtcTmZLVS9McV5BV0VRRnVGIW8pOEAhRCVjPDRLWCE3OzUycFtJQnE5IyVfKnFOcTckbyVrUGxZLTExIk1CUTlLVSg5bCsmMFxPVlAoZGhFXS0qa1hLXEU6U2lRW3RVXHBRLjYxM2ZpaXMiQSJLaktNL0ExKEtKSyVGLF9idD0/TENTPWYwXlU7RlghTHBMRGJDUm9Ba1k2V1E+M0pcQi9OTC0sIW5hVC5oQWsxTEwjKjZqWEcnc2JEIlxbWSdcS0pqPzwuLHNbRXBGU2MhJz5VSl4lQl5qaFBJW29WVEU5L2JDQzJRNW5UKyFuYVQuPzMrbG42Pm0nRWVqOyJsMkpdIlEhaDZVNTkxclshKDQkP3JaUElrLkAnXlZwM051V29dZF4wZyRiWmtQLHRHQlZhTj5gbyElTiE6K2tSbmJGLDNiPl9MYSZLMG8uSksnciNTOGpYIUQraWZkNWBhXGRXV2FlLUhdUkpkQSxHPlQifj5lbmRzdHJlYW0KZW5kb2JqCjI0IDAgb2JqCjw8Ci9GaWx0ZXIgWyAvQVNDSUk4NURlY29kZSAvRmxhdGVEZWNvZGUgXSAvTGVuZ3RoIDE3NzYKPj4Kc3RyZWFtCkdhdG09Xy9lOWcmQUBCW3A9Tm9RLlI4TGVIJCVqZlNQNTVdRClGPmsmZ1NdcTg7M2wrV2FCK2BgJ1NLWicyWVhUZk5wM1FwMGlOIz1IXUNEYl9QbyxRV251SShcI1VQJDhkPVEpQ1Y1IT1TcjI8KDoucDhsQiIjc0IyJUEvTUt0ZDArdUAtXGVOJ0hNaXJcP0w5OVh0RlM5JSFFIWguQjgxO2dEZiIocXI8OVFPa11YQyVIOXAxI146YGszWm0qMV8nbj9OdXArWWg2ZmcybVVvX2pxVEddXnVHJV0tb085a1lCP2NDPD5FL0hDMzpuaj9fOEYnVWgkKG8waXM/dGNmNWtPYkNJK1tlNHFwWDxgUnJeUmU0ck1SP01vb0JnM2pcUyRLcTptPDRJbUM9dCcibU0xLShsZkQyXXBVYV9lRlMhb1VdKVdwYHE0SjYyNTBBayQ3TUJiRElUTmlBbVUpP01SQEZRL2gtazIjPkY1NF5mK2dFaigwN0giI0lULmFEXnJITzkzSEUhQDY9YzItcEBsSFkydVszMGExYlErPyNPO191MDwjXSlXcGBlXU9iPCNnRCVzaGlxbS8yMHU3Nl9pKGlLMWQkLD9SRCZcU2QmakItWjtUXkMzOig6YT06TyZTMihEcywsMGE3RSQsbGMyKDE7WyYvTzZbNzxIbGxvZm8pJz8jLC5pJlBCV0JpV108PVtfUjQvcjxyUHM/cExZQjZVYkc7Rl07cXU1TlRdODBgRz5UYjdnNSJGNXBebjAhSmdLXylKMVhoPyM8S01RZHIpbUxGcSJrPU91NTQuPFFCWCJZUypSImMmKkxKblpVaylLTTNcUz5vbGJccFEyOWRGVjZAITBbdG1bOERRVzVyaT5fOksiW3JaSUloOCN0SUM/SyRzLnMzNlwzM1VASihEXyQxJVokUHIoQExtYFdZQEEpZypKSEkpZ04vS3RyRj1cI1pHdXJUSixEaiE3bClKKl1JTnBuZTxHIyYjXTlPZ3FHISQ/UWtlNUtYSTA4KTVwRFIxcEFnL0c7Y0k5I00mVGFZR19KbyRMUCIpTERaUWFZaCwlZ0UhS244Ny8vayFgblNMNjchPVVvTTAqb15adVQzTz8iLk4/N0Fmb1NpNVN0JTxVJmhTP29MW1dHIUY3bDFFXFBbaFNIYGIzQV4nITMiSGgvZWBzJiNpRTlKQkJCVlZtOiIpOWFpSm0jSG40T1IrXSxTNj9JZUg/Xy9OS19OQW1ERUQtaVZQXl9LKGtkJWZeb2pZXFZLTm5jRVQ+TmczImBoOFlxW1FEX0hlMDpQN0syUUZASl4oZldOTEokUlw3Z2hRcF5CYTtUKl9kMkdXNzFjVEVsOVddSXMnPk9PPDNPbydGI1dIZUI5TCMiI2RNXElfJk1YXz44XS8sL2JVKHNiYGVzMSUzJDpRRyNuT0xjYChbPGUqZTFxUkpka15cJnExYGhiWFxMMS9fbT5ORFIpOWVbZW4zKG1JOCdNbkcmSlcqJjRVNScoNEEtXE9bYSdwZGFpZkNnZDNVKmUoI0FSKXRDLChhcF9iJzVUKE4vOjpaXlImTTpGMyxxKF9kMUshSkJpcks1UkBKcWcnOkZNQGEhQUsnR1VNLl4yTjdhM01NT15ZSVQlL04xTF9cTCEwKj0jQFVpU0cmYW4pZEtqTG1sMzpVV3ImYDk5Tj1PLkk0cSpZa1leL1QuVSFhZXBSP2lvIk1oa2Rrc25bam9QXko+NnBHV1giPXFgXUlIVDY6PXJtZVMsRnFLZzVUOXRhTUNnVjRuRltybE9rRl5KKy0zQSF0RzxXUVZTQjdCTzhuLkAlNCNjbHJPKWZhMDBbITVtZnA6SyNQazMncChTZT40b0hNZF4xYytEWiFfNSUjW0cyJUthQ1RTNGUjQixuRzA2dVAlSz8lNDc0VDFXZ3BOM2VATy5iKyI7ZGxOU19bIlpOJzljLFgvaWhabkBrPipQbCohLEVKJFhPRjZUZDpmaWNwSkNAc0thIVpYYkZjUlw4ODdrWTJGaS0jN2UwNV5tS29EaS9BXm5tNz5tZiguWiNmclg7S2AzWVJOKXBhWWs+MkdfbFMkZm1mNzVlcSwwMS5ZcGoxUS9bWEcndF0rSWZkTz0hNCE/XUppMjlDTyVSJzJKW1NWSm8nJC8/SzBZWk9ZK1w7YyEmc1NPTmd0Y1JqKz8wXVUnZTJbQ2hoTVMkZ1U5JFk2VDBwWkJQLy9hcHJHYyEmdUlPai4oZFJpbjMuXVUqayRFYiRcXlg+azUsVV81JGlpWD1nWCVLLXAyWV1wZkFrZiQnKSRHQzxdamNRO0JyS1RabWpKWT1mamZlWGNaaToiVj5eYyN+PmVuZHN0cmVhbQplbmRvYmoKMjUgMCBvYmoKPDwKL0ZpbHRlciBbIC9BU0NJSTg1RGVjb2RlIC9GbGF0ZURlY29kZSBdIC9MZW5ndGggMTc1NQo+PgpzdHJlYW0KR2F0bT05bG8mSSdZTmE1aTdNWT0uUkFTbDgoVUpgYVldRjo8bXJpVTVyJygxPChQMDdxV2VOTj1AYyJuIVlSQC9nV3RxPVtvYFw+Si5zO2xybTpaPUVfRkosJGhFbS44bl5tNkNJN2llUEshIk9valtXKzdQLUJubzk8ZkhhYmtBOChLbWMtbClTa3RaXW8qNSpqWytFMzE0aVo3N2ZlNmMpZkA8ZFtVdXJAZSgyVzhMKUBSUHFIXTVxUWFcVkhjIkZga3A2JSVQJUtZKFtjRTMqZEFebVAsP11DPE1jXGYxZl9jI2Y8THJ0ZjxvZjcpV3M+cC1yO0BzXickWUxMaywrOiNxYClVP0QjaiEqXEolXUhQdVckW05kQm4zaytwbStkUHAscD8rLS0wRmhLIUJcbyhRS2RQQy1HTGhdQD5bP11qKWx1c3UtYWBda0pfXFJQT1dgQ3RMUEEhRzk9UzFMXkRGPGpkXTNUXSxUcE4/Xz1jWjpzQTZAJnQpN0lvKlcmQ0I1aiEkJDQ4LUNNai8vbzcyMHQ2aCE8c2hyTUhFK0RycSc5JiZiP2NiYkNDKklpPmQpW1VrbTowLWBoaD0ubW1bJkolWUInPilwYjIwIy1VXDFsbCstcl1kdFAqSVE4MGJCMTIrYF8wP19JPWlqUF1bJXBgPi5dJkM5XkNYVHRCTT1GZ2ViKGBWLG1kLiwobEY+RSE5VD8+P0hUX0RxcWw7V1xwR0ZaPE1McVJbXEZuJTsjcidZNDspPD1USFsrQ2pvRlBYO2U7cGMuJ25rcEZrci1iO3QnQS5EOzVEVmJIUStRJElxPXQ7P2M3YVpYM3QzUmlJZmItZVg8ODF1NyQ9PEBgRUdQRD1RVjw4Nmo2bEU6LEtYKVRHb2RNWVluTW48L29nKSEyckttMT86ayhETTA+NE5kdFpaW25jbTwyaU4wRE5SMTAkW1IySkldM2lQa3MzRDBpdG1iW2FJNzJHNUkkTEMnLT5mKiokSFBLV01Tb24yaFNWTzBVZC08bzk/aFhuOEBbWEwsQjpETXJXTTgoRjg1YVNIJitEYzJoVWosNDhNYDROWWBGMGpVWUVpSlxaK2wvbjVGcGNbXyljU2NWV3RHYm0lZyNvOyU3NjZSI0pqanJtZ3BsXTFdZUhZKSQvbS8xLCwmVSEnQTZGNVIyLE80U0hCKVFuK15jOmJIRGUvOVoraWpcXlBkL2BzcGgnWzs6LENwPi4pVEIxUCEhXStzdEcnKmpDISNxXlcqR2NATEJzPHRfJT1lTGcib3J1KVxXJERdZzskcydvZ2MsTCU2VzpdTilCVFw9TmsuJlRMKDNBPiJhMWtjN1I6Z1duNTYjSz41SCxZXTBJQGxQVHJNcjhWMD5RVlNgTWsvZU1OYHFwZW5yWzI+ZFZPclQ+LjlIXWsiQUdPTG86Tig3UjY2PSYuL1syLCg4RXJXU0c0KjZiaUdOJSRBQj5VIlJBJ1NhNSReLSUqWllGOXBAWUomOFs4ZGtuR3JCUktVaExOIk5CUFE8J1lHQTQtSXROaXIiZCUjKVJFZms6dGpLXWA4RDJEQSdqKVFsaGMyMVEtdU87P1w1ImpCQVFUTTQhayFdaV86aV1oQWExWWlrRydRLm90bj81ZlVxJktzaGBTMzlYIkhFUWxmczwuIysxZCQ2bjlHJlpLL1tPJSkiMmE0R3JvbWUoXFlJI0c/WlxPYydvSSlIKFJmWTkkWTo0aj1HQzs6OHJJOTpUc0hicU1eY21CPiE5cV05SFthaCkuRmdKQmBfbGYpYVhwWzxDSDYyckRRJyw1JVMtLWkjV0lSaVYrInE5Jj8jcnFTQz8tUDdzJmpTSlQ9aDpwVlFPXz1DdGwqZ1ZQZTNrVW4rMG9VXFpkRGpiQlpUQmY2YCtlTmoxXURKcmVsa1xrVGh0QGxKWStvbj9II1lnSWpHSmYsMlxqNVBmLlJyYS49bmsodCglRk4hXGgzJCNPXEYxbCozPTtpRWIsQGx1PkdLRTYqUnQ5SGIvdDdDOTZuWlshQWczUyRfLkZtWE4+dS9FQUUsXSY5XVdLLmZNKEEzJC5xcjRaNChSM2EoNl5QOVM9ckleaCtkV2MrbXA4UVZHOy4sKyVEITFRZmwjP28qcWc3WksmXVpHZWlWOV1XSnNmTShBMyQucXI0WjQoT3JFYGlgLSctVSFWWWFOUkRGME0oUkFRLGgkYUNSQmE5XVdLNmZNKEEzT15qPDBDXiVuOyw/RylMbHN0alwkJCglc2goOmB0RT9zSytibmlBVjNvOkBrTWlKaiM8c0lQTjdnSWB1Sithcz5xW1hPSjt1UX4+ZW5kc3RyZWFtCmVuZG9iagoyNiAwIG9iago8PAovRmlsdGVyIFsgL0FTQ0lJODVEZWNvZGUgL0ZsYXRlRGVjb2RlIF0gL0xlbmd0aCAxNzYwCj4+CnN0cmVhbQpHYXRtPV8vZTlnJkFAQltwPU51Uy5SOExlSCQlamZTUDU1XUQpRkpvJmdTXXE4OzNsK1xtSmZwYCdSJzcnOzI+UGZOcDVnbV9eOVI9SEs3QmJfUG8sZjZgJFQ8cSxdIiQ4ZD1hKCs8TzE9VCZgNT0sU14+bEIiIzNBa184Lk1JaUBxK3U8WmlsQjUmLUU8NDc5VitKTDNhZ2lPLiFSNUxaUkJTNypeZl5fJ2QyWCYuZ0ssX21yS3RjZzElLEReN3FcQDVRVSlyOFhTMi8kTlUxYnBxW2xsJEAuaWVoJ08uL1pmPUtIMldYQFQyW0NNTGVjZWY3KTtSNE1wYloxRyFwTWwvSGdPUWVAZU5sK0w/PCxmIVJlNHJtYmg5TVRaayksKjZbImozV24rK2FbclU8VGJuSm1VQy9aJVU6aUJjSm1nbDhFPE9Xc3VpPWBoai08IWktYUNcRDI2ZjYkWUdEPFcxU2YrOkBWPEYlYDlTQz09Ry5LNmA7Ly8wZ1ljU2ooMiJhLWxCJC9sPjRCZTFuJTUsdFI9WykkcyNwODRcK04iQlwvTl5qakhUVzpqVmU6XzFVO3NQbytWKypAUjVsKjI3JnBiWmxMI11PSWNASyI2WEAqNz5gP2o7RFhnSiZDMFpQMzdkMiRQWE1cSkwqYE9BLmFxIz1NXWlUL3NscC8mSWRGPWxoN3I/N0dcNGUhQERYVi85LE5jcDVnc2dBbjRzcVEhTE1CRk82bS0qVSNnPSFyWHRcY20tLVBgVT1WOT1gNyoxZiVMVWtESypic1pNWEshcEReJkQ4I0pMUF88Z1Q9ZHRaYVMjU0VAJzsmLlMnLXM7UVtSTiY5UTckV2cmRzJLSy4zQl1hPkZsUGY9UyFZWiR0KCc6LlExSWwtaCVbQjgsXz4lbVlRRDxma042ZUBfJkM8QmU4IkxwO1k8SWthNSdoKWhdNzYvUnMkJDlvakBtbjdNaV5MQWkmTXEyNzBpUTs6Nkw8cShgJ3EyPyZUYChTMWhzLztgWFViOylOI0c6WlwtbFNwXU91Vkc+XU5DJTojQS9DTGZGZEZxTks5R3EtWjRkYFhJYWJWTU9UKUkoWFtLbVBeZURaIkpOUDFaXjI1KyxdYmVbbkdDYnVGdUI8X080YCxxcEk9Q1wmaCxbMVAzJU0rXE9fJi5UWCpLIT0wOSYyQk0yNj1JI0YqQC5MblpUTlVcOCdLMGQoPVU0UiJcJlY/QURwOkNRcUwqU2sqaHNcNzc4cz5ga3NxWTBjKEc+VmAmRk9Mb0NwKV9GOUtQZm5VdEwnUig2WkZIZDNWX0Y2ZEVlXCpcOW9YOVlZaVYmQkpCbEoyPGsoP1IkKEBHLjdtdU5sZnJOUyteRDZXbkdHa0MyU0AoYVBvJlQ2Tl9IMTsxRCc/JSFxNmpFcGZMJ25uU1poa15oTUExVEpAbjQ6ZWUrIS8uS2g8MHFgR19qcSZRP1xAX1NVKjBAOiRbJj5fMzdwUCplXzBPRHBzYWJoS19jUW9lVjUpZFcrTzQ3bTZuJlhmUV9qJ2NGc1tHcklQZTA2NmUmKFdRSltxaXErL2RQLGJocWclMl1VQDNMI2dOXWJqcFQ7LnAxXUpBUj9FZD1PME9NL1k5XXNuZWVTSi4jW3VbITgnSD8oQ2dzJFZKL0JGZHI0bjtaZnQvamBNQUpUaD4nOydAQjBRV0hpREhBK0lxX3MlWnRgR0BuJSNzYGFdbF11JTJbRVdTNDEndFZqRGYyUlNAWU89aUFMJmM2P1M4Plw8QnAjblBOX0Qpcis5aCpFWnVMNkFOM2UxUC8kbVlBUjZdJCxOLHEhJm11OjxTKHVxcCwrZT10RVQ9JGFbUl1ySG4tWloiM0BmXk5cTi5objMtbktcTz40QV1AQlducl5hdVhwZ21jVlQ0KipEPnRqRXAjb0ItO1g8Om9sMSdVbVBlMFQ2cD1DLylEMklvOlNHZzMiSWEoNUIyYF1pQU5dOk5vMEN0ckxCMzpVcWYzJTYyJGJULWBubTZuRmYoLlozZnJYO0sqOC5GVF1hOnVJYkJvKFksOj5DQCxGYypSMmFdSz1II0pSVmYoKi4lRCJibnIuQyooYV1yWElXQ08qKksySltTVkwyPkgzP0IvalFvJWpOJlhRQC42Wl1QbypPcz9JKF1ONjVGW0NlRmUySltSazZUL18qMDFAZDdUcEhQOUFoRUpyT2ouKGRSaiI5L11VJ2s0W0NlRmEySltSa25TSTopPFprT2JpWSJkLmM7b2EuK0Q6R3FobmgvYjpQJ1I3bkldLF5eMkFcSixHdUlQPSwrOjJWW0BOSXJwMmtScF5faTJGVGh+PmVuZHN0cmVhbQplbmRvYmoKMjcgMCBvYmoKPDwKL0ZpbHRlciBbIC9BU0NJSTg1RGVjb2RlIC9GbGF0ZURlY29kZSBdIC9MZW5ndGggMTc2NAo+PgpzdHJlYW0KR2F0bT1fL2U5ZyZBQEJbRSw3PS9Qb3JWTDRNI0VuOjhaLj9bW05kciQnTEVJVWRAdCZRKjJpK2lCX0pzJzsyPlBmTnA1Z21fXjhtIUthJCRkTkAzQz8+XilGRCpgVyE2T0Fhb0BTTE1rOldWTmtucDMlZjE4PlZRZHM4clg6M1xNPm83Q1U5OU9GPmhiLVFiYkgtRl5IOEI8bmJHYSZ1PmZ1dG9kUUs4RUU9QTQxOzNHQmFBXlhEQWo3cGldYEd1IzhdM3BkJlc3UGA5MUBTOzBdJlk1cFs1RWomNlo/WiRvTVRucjRDWG9EZlo2RjRfPmh0N3VrOSNKdEJmKy5BYlosbixPKVpeKltmTyJyalxAWWc8YFwjbzNwTkQvMGtdTkFkbG8jcClSQD1lbTw0SW8uYV5pOWgrUjxNWUVrZVBdQU4jQFZPSipWaF4zUnFlOEYwKkNIXG1rUF8yU0VgNHFiQitoKm84ND9QRGQ0XCI6PGl1bl5FbzIhcCUkIzgoJGciIj51Z2wjb0lsTTJYc1JPbWRsWHFbbyw4P24kLk10MC5TIlNqL3VVKT9wPiIpXlEoM21DcjNjZyUvbE8oOlU9L0VURjFGaCdIYWFKM0ZqOHNcSFo9LzhpYzkhLVdBPCphYmRlbVQ2KihdJy5Lb24sYmY3MGVYKUJUSnJWK3RWbGI7ZTtyS1k+IS0kRmtyLWI7dCdAKzJicjI1IytIdTpLMTFRWzwxNG1KLjMyNGNiWFxXP2t1XnFYOlZpZ2ttZSh0IyFLRUNOPysiXUxNOUAyRUhTOCJRMC5URW5XUUElVkAwJjBwNicrWChiIW8/Tj1HNFptK1t0KT81PEpkcnFoSylFKFJeNThPIWxOT3JOMmRmKjpIYzViWEhXbDdKS1BZQ2YhLGhJdT1GI2lbazY9X1JCcUFdSXI8T0NYYzcpY1JNSG1rI0RFKk1cUkAjbjRuT2ImLTpTRGREL0g0LlpjJytFQy5UXz9SSTtzMCFgOHQ0aWcqL1VhcGlAV05ARmlxaTdWYGg8VnRJcUc0OEs8TVVpdUQ/UDJQWWVpJzFAYyNdLzkhPXQzWlZqZjw7QHBPUXAuRUkwZyRfdFFgbkZpMVg7SXFRIykmND85YDY4SzEiWSVhTl1ab2QvdVFFOlpqYF4jWSciIyFrcUIsX2JsLyZuTG1FakI6UD9OMmQtJ2tgZ3JbaG1JIVVfKm1PUiotaFFtSShfcS04KEtJakFaOlY/Z1tIMTpyaSJRPWNnTG1xU0xnMVNIdEVVVmxvYl82QjFrc2QpQzZDT0FpclklOkdkb1JyLiRKRFY2b28sTT9JaTVNSjQjSVkwXEc3XGNQOFgmXmVBL18lIUcqTSwrZVxjPV46PFpWMGVlcVJuMChtJnA0LlwwSVpDdT1wXlBIcy1UXjtwPSd1KzM4aCFPNmEpPj88MSlqcVAzcy1FRyxPcUQ/SltzLnVNS0QtVjowOmtJYDY6RmYoQHRVKzA0aW8zI009MyhmNlRMU1VKbXBMPG1RWnE0SGdzYD1HJFxyKzxnPGo0OUszZEsvRjhGTVFsO3BNUDwtKldXNlotL3IqK0RgSDZrLWJRUS90bW5zUDsiWjBiIj9DaDA8VEhhJ3RmPignciQpQG1iWzFQLUBqSWpgM0AwOlNFalUoMScyW29uN1BZaEI5MkRDPmVaJnBJNEU8Nl5RJTo4aGVOdSZVWTReTmUjW3RQPGA0aDFPTmctVlsuNFNZOyhrMkB1OlpATFFjRk5UNUwyWUs6OihCLDQ3blw1NidWUzQ+cXFpWm1BUzYsbDpqbidiW01RdUAzSkUrKjxZZycpMTk2YnNXVGVcPzBbRCgqU1Q0W1tPVTRvYkxEdVxcLFNdciR0RlBqMDtxc1JSRjxLYyszMnA4UWVISydqQyplIS82bCFvJXBkcUo+WyJLdDFqZ3BCdWo1Rk4nKENJdShNQThRT01aLnVdVEonSF4pTlVlTW9qTENydTAkL1tuUUxjamo4cDVyYzB0YzRsMl9CIThOOS5cbHI1TmQ2J1B0ZDBoPzdaN0VvJVhMYGNCcVdZc2clSyxSOWdEUzJVUD5aKCpgVlMkQUtNSl4rKlAwKlJpTWkrMylFTjkuXGxDclVNUCR1RXEoaD83WjdFbyVYTGBjQnFXWXNnJUszIVlxWFM8bmxRPU8qQ2ZidWk5N15oLC5cVi1sKHBdWC5bLlooKmBYUyRBSkIiLlFRYzJaXURRUzJVWUFaKCphbkNzZSpBISpPPSRpaDU6RCgjZlNdbGxOYEJHZkpgNl5zUClKakxXXzJjKj9sNztcLUdpYTFkSSwqR0RZU2gxKk40SWhvMiRsaX4+ZW5kc3RyZWFtCmVuZG9iagoyOCAwIG9iago8PAovRmlsdGVyIFsgL0FTQ0lJODVEZWNvZGUgL0ZsYXRlRGVjb2RlIF0gL0xlbmd0aCAxNzcwCj4+CnN0cmVhbQpHYXRtPV8vZTlnJkFAQltFLDc9L1BsTyslNE0jRW46OFo6Q1tbTmRyJCdMRUlVZEBzU2g2L0lzaV4mU0QnMllbVWZOcDVnbV9gTT0kUDkkWDBjcklTP0xKM3JCZ21KdTZPQD03WzNfJWozRWM7UT9FWS06KFhzVDldJCspTSY1Yic8VShrLW0xSmFAJU1PWSdbQTgwJVU6NnFFLixWKUh1PkxeWUQwMCVvPiw8c1AsWyMvWywpMGJkYSpdcUFOK0NwTVguKUQ3Nj5ia288LWY8YiQ/SXVnWGFtKCpSXW0+XTJRUkNfIW1lJmZFLT8jLiZncl01ZURrIXNePVZmbFZXYEFXRVw8UGBeITpGS0JPRFZhNkZvTVQ4JSskX3ItZmBMWF8nR1FpWkdUcCtxYTJaUGg0KlpuUmQqMVVhUUs9KUojWFFIWD5gT2Fbc0cuY0MlXSErTjVpRio5aV9mJDszTFpvLWVsYklTQUBvRTJyK2wlMWE8XztMZVwtNTBYbmB1LmU2I0NSayhkXT4mbjtHSzUvSDpOa0s+cWttM2ZPJW9SV0daSTA9LjMvXy4uWFNWZjFBIl9xNkBULCFAYmInI2pRPExiX2xiNydUYWg+ZV1BWVd0SkE7cl1HI042WlliJ0dGTjIqTGpOPHFrJWZjXGlxbDFgVitiYllFZl4nPktYIV8vcEh1K3E5OCxiajZtcjsrcWFVU1pJR3ArLF9HNylTTyYkMm5jKzZHSDEsVlVtcG9CTzByPDtpNFF1KlNeYEYpOTxNIjJcJERHQlxbLU5kV0hJKmUwJHVudDMuPEtzWmdUVF9cJzgqIVNRUzkibDFSaiNoW2JeZk4ySCM6Iz83RC1rTkEtYy8tNjM4USwwJSFiYCx1cDZQTEo+YVthZl00MiVdJkJyPGA9OiNZO3BBP2FdcWM2cywsaVw5c1NKWUpUbVZtXmpWQUFZJVg2MT9XPURARj4pJUtfWmI+N3E+Z2lYZlQvblluSmZrMz43P0VpM151NFolO1o4P19jRmdgOmE5XUMnQFgyWXFAIlIxQC9cTVFbSWs5UWhlVEtyWi9bJFFWMWFtWWpdLGBIM0E+R2NxPjZEOjw9RiFjJEdLWShuIVhEOUNxWGAsW3RWQT9XVC8obkBBckFgWD50KVxtIUJdVkhQMCFfXltdM1s1NGZCIyFKIjciSUdEYlQtZSdpZ1ZNTiwnTF0tI2stUWFIci1cJ05QLnJSXShpIW8rPCxncXBJVWVeIy85KUxKXTIhRSpaL2RVTEk6YFQxcTxuWypQZm0rPk9aYCgvOiNIP1QoNmljIio5VHBeZlBXO15gazZVQm07aUlrMz9vIWVRTm9xVXFddUBrOVpbPWhtQ2lpIVhJLGQkM2wmVGNubWsuTFVmciZpJSR1KTFqMUJeQWJgKUBSLyssajpbdGduTXM2MFMrYkk8MjBYSGhORSJwIWM/a0FIWy86OlwtayFFXG5cO1FFZikrODljTi8qPDJRcUosI0kpWC5DQSpUVmlFNGw/MEYnIi1kXDJPcWtAb0FHIl8zNTBaRig5MCxAZFhoWU5KTiojaUVKMElBdE8sJi4pK2ZbLCVnR0FHbzhfTiFWPSZiNTwrSE8iclA7PitxIzJGMEdqIlFFIzVqXEo7cV0/KVNUWV9rIy5uS0I+MGVPKz04bSRIdV1JKHJkRz5RRVU9K3NuMzBzL1wrQi9XUSFVJi89dGFAcWxRVV5XR0VCP29jXzxOSCIhW1UwUy1FJWxJXThaUms5ckxySDFaTWhHaSpcKyRYQVVbT1Rsa0hILVdfUiQ/RDZdMmhnVmI2W0FVQUdQSTFtYmhNOio0SCMsUzdWXV1GSTpuIW0vc11YLDk9KWo2czFOXWk9SmsvO3MsTTdlSHFTN09NVk82RzQ/KSFULnBYb0ZiYGJtW2ZGNTluWG1MVEVabFljXz8vZF0vWWlSZicoZSpuRVIyPz4rYU49RWFSTU4+VEwxYTlcY2FdVCdrSWM+cjg3JWVeOzVWSCw5LFkqK0ppNSw2OTMxVWUhQilIUkQkRG1LR3FCOGpRK1dFNmJ0OzwzR2RjXE9gWEIiUmFfUHQlPWlrRzhZWl0oYDttPXBzWUdHWDUnIXU/WjJDaidUITFUN2QyQCNfOl1VIjJwOG1dXVZBZ09XVDRCbGk4QGcxTWRqTCMmKjxxPXJRQ2ZeLFwnUHBoQD1wZC88NXRha1Q9aWtGZVlaXShgRjBKZmhDSDolS2pMI0Q0PHE9dF9aUiUhLSZuTCpcOTdUVnM9V3I2RjRJSlEkS2hrZjUjcm1aOzk3NSJbLk4uUCczRTtUITEwLk91V10wXDVPNVdHQXJyUyMvSnVcfj5lbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCAyOQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwNzMgMDAwMDAgbiAKMDAwMDAwMDExNCAwMDAwMCBuIAowMDAwMDAwMjIxIDAwMDAwIG4gCjAwMDAwMDAzMzMgMDAwMDAgbiAKMDAwMDAwMDUzOCAwMDAwMCBuIAowMDAwMDAwNzQzIDAwMDAwIG4gCjAwMDAwMDA5NDggMDAwMDAgbiAKMDAwMDAwMTE1MyAwMDAwMCBuIAowMDAwMDAxMzU4IDAwMDAwIG4gCjAwMDAwMDE1NjMgMDAwMDAgbiAKMDAwMDAwMTc2OSAwMDAwMCBuIAowMDAwMDAxOTc1IDAwMDAwIG4gCjAwMDAwMDIxODEgMDAwMDAgbiAKMDAwMDAwMjM4NyAwMDAwMCBuIAowMDAwMDAyNTkzIDAwMDAwIG4gCjAwMDAwMDI2NjMgMDAwMDAgbiAKMDAwMDAwMjk0NyAwMDAwMCBuIAowMDAwMDAzMDc2IDAwMDAwIG4gCjAwMDAwMDUwMjkgMDAwMDAgbiAKMDAwMDAwNjg5NSAwMDAwMCBuIAowMDAwMDA4NzYyIDAwMDAwIG4gCjAwMDAwMTA2MjAgMDAwMDAgbiAKMDAwMDAxMjQ3NyAwMDAwMCBuIAowMDAwMDE0MzM1IDAwMDAwIG4gCjAwMDAwMTYyMDMgMDAwMDAgbiAKMDAwMDAxODA1MCAwMDAwMCBuIAowMDAwMDE5OTAyIDAwMDAwIG4gCjAwMDAwMjE3NTggMDAwMDAgbiAKdHJhaWxlcgo8PAovSUQgCls8MWQ3ZjUwY2E0NGVhZGRkMzRlNGUyZDA4OGQ1YmQ5MTU+PDFkN2Y1MGNhNDRlYWRkZDM0ZTRlMmQwODhkNWJkOTE1Pl0KJSBSZXBvcnRMYWIgZ2VuZXJhdGVkIFBERiBkb2N1bWVudCAtLSBkaWdlc3QgKGh0dHA6Ly93d3cucmVwb3J0bGFiLmNvbSkKCi9JbmZvIDE2IDAgUgovUm9vdCAxNSAwIFIKL1NpemUgMjkKPj4Kc3RhcnR4cmVmCjIzNjIwCiUlRU9GCg=="></iframe>
+  </div>
+</div>
+
+</body>
+</html>

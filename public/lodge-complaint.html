@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Public Service Grievance Portal | Government of India</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:'Segoe UI',Roboto,Arial,sans-serif;
+}
+
+body{
+    background:#eef4fb;
+    color:#1f2937;
+    font-size:17px;
+}
+
+/* TOP BAR */
+.top-bar{
+    background:#0f2a44;
+    color:white;
+    padding:10px 20px;
+    display:flex;
+    justify-content:space-between;
+    font-size:0.95rem;
+}
+
+/* HEADER */
+.header{
+    background:white;
+    padding:18px 25px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:4px solid #0f2a44;
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.header-left img{
+    height:65px;
+}
+
+.header-title h1{
+    font-size:1.7rem;
+    color:#0f2a44;
+}
+
+.header-title p{
+    font-size:1rem;
+}
+
+/* MAIN CONTAINER */
+.container{
+    max-width:900px;
+    margin:50px auto;
+    padding:40px;
+    border-radius:12px;
+    background:linear-gradient(to bottom,#f8fbff,#eef4fb);
+    box-shadow:0 15px 40px rgba(0,0,0,0.08);
+}
+
+/* INFO BOX */
+.info-box{
+    background:#e4eef9;
+    padding:18px;
+    border-left:5px solid #0f2a44;
+    margin-bottom:35px;
+    font-size:1rem;
+    border-radius:6px;
+}
+
+/* SECTION TITLE */
+.section-title{
+    margin:35px 0 18px;
+    font-size:1.2rem;
+    font-weight:600;
+    color:#0f2a44;
+    border-bottom:2px solid #dbe6f5;
+    padding-bottom:8px;
+}
+
+/* FORM */
+.form-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+}
+
+.form-group{
+    margin-bottom:22px;
+}
+
+.full{
+    grid-column:1/-1;
+}
+
+label{
+    font-weight:600;
+    margin-bottom:8px;
+    display:block;
+    font-size:1rem;
+}
+
+input, select, textarea{
+    width:100%;
+    padding:14px;
+    border-radius:6px;
+    border:1.5px solid #cfd9e6;
+    background:#ffffff;
+    transition:0.3s;
+    font-size:1rem;
+}
+
+input:focus,select:focus,textarea:focus{
+    outline:none;
+    border-color:#0f2a44;
+    box-shadow:0 0 0 2px rgba(15,42,68,0.1);
+}
+
+textarea{
+    min-height:130px;
+    resize:vertical;
+}
+
+/* FILE UPLOAD */
+.upload-box{
+    border:2px dashed #cbd5e1;
+    padding:30px;
+    border-radius:10px;
+    text-align:center;
+    background:#f4f8fd;
+    font-size:1rem;
+}
+
+.upload-box input{
+    margin-top:18px;
+}
+
+/* SUBMIT */
+.submit-area{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:40px;
+    font-size:1rem;
+}
+
+.submit-btn{
+    background:#0f2a44;
+    color:white;
+    padding:15px 40px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    font-size:1rem;
+}
+
+.submit-btn:hover{
+    background:#0c2238;
+}
+
+/* FOOTER */
+.footer{
+    margin-top:70px;
+    background:#0f2a44;
+    color:white;
+    padding:25px;
+    text-align:center;
+    font-size:0.95rem;
+}
+
+.footer a{
+    color:white;
+    margin:0 10px;
+    text-decoration:none;
+}
+
+.footer a:hover{
+    text-decoration:underline;
+}
+
+@media(max-width:768px){
+    .form-row{
+        grid-template-columns:1fr;
+    }
+
+    .submit-area{
+        flex-direction:column;
+        gap:18px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+    <div>Helpline: 1800-123-4567</div>
+    <div>Login</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="header-left">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg">
+        <div class="header-title">
+            <h1>भारत सरकार | Government of India</h1>
+            <p>Public Service Grievance Portal</p>
+        </div>
+    </div>
+    <div><strong>Digital India</strong></div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+
+    <div class="info-box">
+        After submission, a unique <strong>Complaint ID</strong> will be generated for tracking purposes.
+    </div>
+
+
+
+
+    <button id="aiComplaintBtn" class="submit-btn" style="margin-bottom:20px;">Complaint by AI</button>
+
+    <div id="aiBox" class="ai-popup" style="display:none; padding:15px; background:#e4eef9; border-radius:10px; margin-bottom:20px;">
+        <p id="aiStatus">Click mic & speak your complaint…</p>
+        <button id="micBtn" class="submit-btn" style="background:#0f2a44; color:white;">🎙️ Speak</button>
+    </div>
+
+    <p id="aiResult" style="margin:10px 0; font-size:1rem;"></p>
+
+
+    <form id="complaintForm" action="https://docs.google.com/spreadsheets/d/1QpSfIKj06uubxXll5erbfzz9V7pVn_8op-iZZ5_7MCc/edit?gid=0#gid=0" method="get">
+        <input type="hidden" id="complaintIdField" name="data[Complaint ID]">
+        <div class="section-title">Your Information</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="fullName" name="data[Full Name]">
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="data[Email Address]">
+            </div>
+
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" name="data[Phone Number]">
+            </div>
+
+            <div class="form-group">
+                <label>Aadhaar / ID (Optional)</label>
+                <input type="text">
+            </div>
+        </div>
+
+        <div class="section-title">Complaint Details</div>
+        <div class="form-row">
+
+            <div class="form-group">
+                <label>Department *</label>
+                <select id="department" name="data[Department]" required>
+                    <option>Select Department</option>
+                    <option>Public Works</option>
+                    <option>Water Supply</option>
+                    <option>Electricity</option>
+                    <option>Sanitation</option>
+                    <option>Transportation</option>
+                    <option>Healthcare</option>
+                    <option>Education</option>
+                    <option>Police</option>
+                    <option>Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Date of Incident *</label>
+                <input type="date" name="data[Date of Incident]" required>
+            </div>
+
+            <div class="form-group full">
+                <label>Location of Issue </label>
+                <input type="text" id="location" name="data[Location of Issue]" >
+            </div>
+
+            <div class="form-group full">
+                <label>Complaint Description *</label>
+                <textarea id="description" name="data[Complaint Description]" maxlength="1000" required></textarea>
+            </div>
+
+        </div>
+
+        <div class="section-title">Attach Supporting Documents (Optional)</div>
+        <div class="upload-box">
+            Drag & Drop files or Choose files below
+            <input type="file" multiple>
+            <p style="font-size:0.85rem;color:#6b7280;margin-top:8px;">
+                Max 5 files, 10MB each
+            </p>
+        </div>
+
+        <div class="submit-area">
+            <div>🔒 Your personal information is kept confidential and secure</div>
+            <button type="submit" class="submit-btn">Submit Complaint</button>
+        </div>
+        
+
+    </form>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    <a href="#">Privacy Policy</a> |
+    <a href="#">Terms of Use</a> |
+    <a href="#">Accessibility</a> |
+    <a href="#">RTI</a>
+    <br><br>
+    © 2026 Government of India. All Rights Reserved.
+</div>
+<script>
+document.getElementById('complaintForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // stop normal form submission
+
+    const department = document.getElementById('department').value;
+    const description = document.getElementById('description').value.trim();
+    let location = document.getElementById('location').value.trim();
+    let fullName = document.getElementById('fullName').value.trim();
+    let email = document.querySelector('input[name="data[Email Address]"]').value.trim();
+    let phone = document.querySelector('input[name="data[Phone Number]"]').value.trim();
+    const date = document.querySelector('input[name="data[Date of Incident]"]').value;
+    if (!fullName) {
+        fullName = "Ankit Kumar";
+    }
+
+    if (!email) {
+        email = "ankit@gamil.com";
+    }
+
+    if (!phone) {
+        phone = "123456";
+    }
+    if (!location) {
+        location = "we will take by live location";
+    }
+
+    const complaintId = 'CMP' + Math.floor(100000 + Math.random() * 900000);
+
+    const urgentDepts = ['Police', 'Healthcare'];
+    const highDepts = ['Electricity', 'Water Supply'];
+    let priority = 'Medium';
+    if (urgentDepts.includes(department)) priority = 'Urgent';
+    else if (highDepts.includes(department)) priority = 'High';
+
+    const title = description.length > 60
+        ? description.substring(0, 60) + '...'
+        : description || 'Complaint - ' + department;
+
+    // Save to localStorage
+    localStorage.setItem('complaintId', complaintId);
+    localStorage.setItem('department', department);
+    localStorage.setItem('category', priority);
+    localStorage.setItem('title', title);
+    localStorage.setItem('description', description);
+    localStorage.setItem('location', location);
+    localStorage.setItem('fullName', fullName);
+
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+    const submittedOn = now.toLocaleDateString('en-GB', {
+        day: 'numeric', month: 'long', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', hour12: true
+    });
+
+    const newComplaint = {
+        id: complaintId,
+        category: department,
+        department: department,
+        date: dateStr,
+        status: 'submitted',
+        mobile: '9876543210',
+        fullDetails: {
+            displayId: complaintId,
+            categoryFull: department,
+            departmentFull: department + ' Department',
+            submittedOn: submittedOn,
+            location: location,
+            title: title,
+            description: description,
+            statusFull: 'Submitted',
+            lastUpdated: submittedOn,
+            timeElapsed: '0 Hours',
+            expectedResolution: priority === 'Urgent' ? '1-2 Working Days'
+                              : priority === 'High'   ? '3-4 Working Days'
+                              : '5-7 Working Days',
+            actionTaken: 'Complaint received. Under review by the department.',
+            officerName: 'To be assigned',
+            recommendedSeverity: priority === 'Urgent' ? 'emergency'
+                               : priority === 'High'   ? 'serious' : 'normal'
+        }
+    };
+
+    const existing = JSON.parse(localStorage.getItem('allComplaints') || '[]');
+    existing.unshift(newComplaint);
+    localStorage.setItem('allComplaints', JSON.stringify(existing));
+
+    // Send data to SheetDB in background, then redirect
+    fetch('https://sheetdb.io/api/v1/0z76h8ewb04ow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            data: [{
+                'Complaint ID': complaintId,
+                'Full Name': fullName,
+                'Email Address': email,
+                'Phone Number': phone,
+                'Department': department,
+                'Date of Incident': date,
+                'Location of Issue': location,
+                'Complaint Description': description
+            }]
+        })
+    })
+    .finally(() => {
+        // Redirect whether SheetDB succeeds or fails
+        window.location.href = 'complaint-confirmation.html';
+    });
+});
+</script>
+
+<script>
+document.getElementById("aiComplaintBtn").onclick = () => {
+    document.getElementById("aiBox").style.display = "block";
+};
+
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.lang = "hi-IN"; // supports Hindi + English
+
+document.getElementById("micBtn").onclick = () => {
+    document.getElementById("aiStatus").innerText = "🎙️ Listening...";
+    recognition.start();
+};
+
+recognition.onresult = async (event) => {
+
+    const speechText = event.results[0][0].transcript;
+    document.getElementById("aiStatus").innerText = "You said: " + speechText;
+    document.getElementById("aiResult").innerHTML = "⏳ Processing AI...";
+
+    try {
+
+        // Step 1: Send text to backend AI
+        const aiRes = await fetch("http://localhost:5000/api/generate-ai", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ complaint: speechText })
+        });
+
+        const aiData = await aiRes.json();
+
+        // Step 2: Auto submit complaint to backend
+        const submitRes = await fetch("http://localhost:5000/api/submit-complaint", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                department: aiData.department,
+                urgency: aiData.urgency,
+                description: aiData.description
+            })
+        });
+
+        const submitData = await submitRes.json();
+
+        document.getElementById("aiResult").innerHTML = `
+            <b>Complaint Filed Successfully!</b><br><br>
+            <b>Complaint ID:</b> ${submitData.complaintId}<br>
+            <b>Department:</b> ${aiData.department}<br>
+            <b>Urgency:</b> ${aiData.urgency}
+        `;
+
+        // Speak confirmation
+        const msg = new SpeechSynthesisUtterance(
+            "Your complaint has been submitted. Your Complaint ID is " + submitData.complaintId
+        );
+        speechSynthesis.speak(msg);
+
+    } catch (error) {
+        document.getElementById("aiResult").innerHTML = "❌ Error submitting complaint.";
+        console.error(error);
+    }
+};
+</script>
+</body>
+</html>

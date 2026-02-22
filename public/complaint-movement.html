@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Movement - Public Service Grievance Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Complaint Info Card */
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            animation: slideUp 0.6s ease 0.2s both;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .complaint-id {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .time-badge {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        /* Movement Timeline */
+        .timeline-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            animation: slideUp 0.6s ease 0.4s both;
+        }
+
+        .timeline-header {
+            margin-bottom: 30px;
+        }
+
+        .timeline-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .timeline-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+        }
+
+        /* Timeline Steps */
+        .timeline {
+            position: relative;
+            padding-left: 0;
+        }
+
+        .timeline-step {
+            position: relative;
+            padding-left: 90px;
+            padding-bottom: 50px;
+            animation: fadeIn 0.5s ease both;
+        }
+
+        .timeline-step:nth-child(1) { animation-delay: 0.6s; }
+        .timeline-step:nth-child(2) { animation-delay: 0.7s; }
+        .timeline-step:nth-child(3) { animation-delay: 0.8s; }
+        .timeline-step:nth-child(4) { animation-delay: 0.9s; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .timeline-step:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-step::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 70px;
+            bottom: -10px;
+            width: 3px;
+            background: #e2e8f0;
+        }
+
+        .timeline-step:last-child::before {
+            display: none;
+        }
+
+        /* Timeline Icon */
+        .timeline-icon {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            z-index: 2;
+        }
+
+        .icon-completed {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .icon-current {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 15px rgba(249,115,22,0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 6px 25px rgba(249,115,22,0.6);
+            }
+        }
+
+        .icon-pending {
+            background: #e2e8f0;
+            color: #94a3b8;
+        }
+
+        /* Timeline Content */
+        .timeline-content {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 4px solid;
+        }
+
+        .completed .timeline-content { border-color: #10b981; }
+        .current   .timeline-content { border-color: #f97316; background: #fff7ed; }
+        .pending   .timeline-content { border-color: #cbd5e1; }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .step-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-completed { background: #d1fae5; color: #065f46; }
+        .badge-current   { background: #fed7aa; color: #9a3412; }
+        .badge-pending   { background: #e2e8f0; color: #475569; }
+
+        .step-detail {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #475569;
+            font-size: 0.95rem;
+        }
+
+        .step-detail-label {
+            font-weight: 600;
+            color: #1e293b;
+            min-width: 120px;
+        }
+
+        .step-detail-value {
+            flex: 1;
+        }
+
+        .step-time {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        /* ── Time taken vs allowed pills ── */
+        .time-track {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .tt-chip {
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .tt-allowed      { background: #e0f2fe; color: #0369a1; }
+        .tt-taken-ok     { background: #dcfce7; color: #166534; }
+        .tt-taken-over   { background: #fee2e2; color: #991b1b; }
+        .tt-overdue-pill { background: #fef3c7; color: #92400e; }
+
+        /* Warning Box */
+        .warning-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 5px solid #f59e0b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            box-shadow: 0 4px 12px rgba(245,158,11,0.2);
+        }
+
+        .warning-icon { font-size: 1.5rem; flex-shrink: 0; }
+
+        .warning-text {
+            color: #92400e;
+            font-size: 0.95rem;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+
+        /* ── Complain button — only appears when delayed ── */
+        .complain-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            padding: 10px 22px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 14px rgba(239,68,68,0.3);
+            transition: all 0.25s ease;
+        }
+
+        .complain-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239,68,68,0.5);
+        }
+
+        /* ── Officer contact box — hidden until complain click ── */
+        .officer-contact {
+            display: none;
+            margin-top: 14px;
+            background: white;
+            border: 1.5px solid #fca5a5;
+            border-radius: 12px;
+            padding: 16px 18px;
+        }
+
+        .officer-contact.visible {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .oc-title {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #991b1b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .oc-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.92rem;
+        }
+
+        .oc-row:last-child { margin-bottom: 0; }
+
+        .oc-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .oc-icon-phone { background: #dcfce7; }
+        .oc-icon-email { background: #dbeafe; }
+
+        .oc-label {
+            font-weight: 600;
+            color: #64748b;
+            font-size: 0.82rem;
+            min-width: 55px;
+        }
+
+        .oc-value { font-weight: 700; color: #1e293b; }
+        .oc-value a { color: #667eea; text-decoration: none; }
+        .oc-value a:hover { text-decoration: underline; }
+
+        /* ── Complain Modal ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 460px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .modal-sub {
+            font-size: 0.88rem;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .modal textarea {
+            width: 100%;
+            height: 110px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            resize: none;
+            outline: none;
+            color: #1e293b;
+            transition: border-color 0.2s;
+        }
+
+        .modal textarea:focus { border-color: #667eea; }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .modal-submit {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: filter 0.2s;
+        }
+
+        .modal-submit:hover { filter: brightness(1.08); }
+
+        .modal-cancel {
+            padding: 12px 20px;
+            background: #f1f5f9;
+            color: #475569;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102,126,234,0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .info-card, .timeline-card { padding: 20px; }
+            .timeline-step { padding-left: 70px; }
+            .timeline-icon { width: 50px; height: 50px; font-size: 1.2rem; }
+            .timeline-step::before { left: 25px; }
+            .step-title { font-size: 1.1rem; }
+            .action-buttons { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>Complaint Movement</h1>
+        <p>Track the complete journey of your complaint through departments</p>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+
+        <!-- Complaint Info -->
+        <div class="info-card">
+            <div class="info-header">
+                <div class="complaint-id" id="complaintId">CCTS-2026-01567</div>
+                <div class="time-badge" id="timeElapsed">5 Days Pending</div>
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Category</div>
+                    <div class="info-value" id="category">Road &amp; Infrastructure</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Location</div>
+                    <div class="info-value" id="location">Main Road, Village XYZ</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Submitted On</div>
+                    <div class="info-value" id="submittedOn">15 Feb 2026, 3:42 PM</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline-card">
+            <div class="timeline-header">
+                <div class="timeline-title">Complaint Movement</div>
+                <div class="timeline-subtitle">See which department it passed through and where it is currently pending</div>
+            </div>
+
+            <div class="timeline">
+
+                <!-- Step 1: Submitted -->
+                <div class="timeline-step completed">
+                    <div class="timeline-icon icon-completed">✓</div>
+                    <div class="timeline-content">
+                        <div class="step-title">
+                            <span>Submitted</span>
+                            <span class="step-badge badge-completed">Completed</span>
+                        </div>
+                        <div class="step-detail">
+                            <span class="step-detail-label">Source:</span>
+                            <span class="step-detail-value">Citizen Portal</span>
+                        </div>
+                        <div class="step-detail">
+                            <span class="step-detail-label">Submitted On:</span>
+                            <span class="step-detail-value">15 February 2026 – 3:42 PM</span>
+                        </div>
+                        <div class="step-time">⏱️ Duration: Instant</div>
+                        <div class="time-track">
+                            <span class="tt-chip tt-allowed">📋 Allowed: Instant</span>
+                            <span class="tt-chip tt-taken-ok">✅ Taken: Instant</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Forwarded — ON TIME, no complain -->
+                <div class="timeline-step completed">
+                    <div class="timeline-icon icon-completed">✓</div>
+                    <div class="timeline-content">
+                        <div class="step-title">
+                            <span>Forwarded To: Public Works Department</span>
+                            <span class="step-badge badge-completed">Completed</span>
+                        </div>
+                        <div class="step-detail">
+                            <span class="step-detail-label">Forwarded On:</span>
+                            <span class="step-detail-value">16 February 2026 – 10:12 AM</span>
+                        </div>
+                        <div class="step-detail">
+                            <span class="step-detail-label">Department Head:</span>
+                            <span class="step-detail-value">Mr. Rajesh Sharma</span>
+                        </div>
+                        <div class="step-time">⏱️ Duration: 18 hours 30 minutes</div>
+                        <div class="time-track">
+                            <span class="tt-chip tt-allowed">📋 Allowed: 24 hours</span>
+                            <span class="tt-chip tt-taken-ok">✅ Taken: 18h 30m</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Assigned — DELAYED (26h 30m vs 24h allowed) -->
+                <div class="timeline-step completed">
+                    <div class="timeline-icon icon-completed">✓</div>
+                    <div class="timeline-content">
+                        <div class="step-title">
+                            <span>Assigned to Field Officer</span>
+                            <span class="step-badge badge-completed">Completed</span>
+                        </div>
+                        <div class="step-detail">
+                            <span class="step-detail-label">Assigned To:</span>
+                            <span class="step-detail-value">Amit Verma (Field Officer)</span>
+                        </div>
+                        <div class="step-detail">
+                            <span class="step-detail-label">Assigned On:</span>
+                            <span class="step-detail-value">17 February 2026 – 12:45 PM</span>
+                        </div>
+                        <div class="step-detail">
+                            <span class="step-detail-label">Assigned By:</span>
+                            <span class="step-detail-value">Mr. Rajesh Sharma (Dept. Head)</span>
+                        </div>
+                        <div class="step-time">⏱️ Duration: 26 hours 33 minutes</div>
+                        <!-- Overdue: 26h 33m vs 24h allowed -->
+                        <div class="time-track">
+                            <span class="tt-chip tt-allowed">📋 Allowed: 24 hours</span>
+                            <span class="tt-chip tt-taken-over">❌ Taken: 26h 33m</span>
+                            <span class="tt-chip tt-overdue-pill">⚠️ Overdue by 2h 33m</span>
+                        </div>
+                        <!-- Complain button — this step was delayed -->
+                        <button class="complain-btn" onclick="openComplainModal('Rajesh Sharma', 'Dept. Head, PWD', '2h 33m', 'contact2')">
+                            🚨 Complain About This Delay
+                        </button>
+                        <!-- Officer contact — hidden until button click -->
+                        <div class="officer-contact" id="contact2">
+                            <div class="oc-title">📍 Responsible Officer — Contact Details</div>
+                            <div class="oc-row">
+                                <div class="oc-icon oc-icon-phone">🏢</div>
+                                <span class="oc-label">Office No.</span>
+                                <span class="oc-value"><a href="tel:+911122334455">+91-11-2233-4455</a></span>
+                            </div>
+                            <div class="oc-row">
+                                <div class="oc-icon oc-icon-email">✉️</div>
+                                <span class="oc-label">Email</span>
+                                <span class="oc-value"><a href="/cdn-cgi/l/email-protection#5220333837213a7c213a33203f33122225367c353d247c3b3c"><span class="__cf_email__" data-cfemail="b7c5d6ddd2c4df99c4dfd6c5dad6f7c7c0d399d0d8c199ded9">[email&#160;protected]</span></a></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Currently Stopped — DELAYED -->
+                <div class="timeline-step current">
+                    <div class="timeline-icon icon-current">⚠</div>
+                    <div class="timeline-content">
+                        <div class="step-title">
+                            <span>Currently Stopped Here</span>
+                            <span class="step-badge badge-current">In Progress</span>
+                        </div>
+                        <div class="step-detail">
+                            <span class="step-detail-label">Current Location:</span>
+                            <span class="step-detail-value">Inspection Unit – Public Works Department</span>
+                        </div>
+                        <div class="step-detail">
+                            <span class="step-detail-label">Pending Since:</span>
+                            <span class="step-detail-value">5 Days</span>
+                        </div>
+                        <div class="step-detail">
+                            <span class="step-detail-label">Officer:</span>
+                            <span class="step-detail-value">Amit Verma (Field Officer)</span>
+                        </div>
+                        <div class="step-time">⏱️ Duration: 5 days (Ongoing)</div>
+                        <div class="time-track">
+                            <span class="tt-chip tt-allowed">📋 Allowed: 3 Days</span>
+                            <span class="tt-chip tt-taken-over">❌ Taken: 5 Days</span>
+                            <span class="tt-chip tt-overdue-pill">⚠️ Overdue by 2 Days</span>
+                        </div>
+                        <div class="warning-box">
+                            <div class="warning-icon">⚠️</div>
+                            <div class="warning-text">
+                                This complaint is currently pending at the Inspection Unit of Public Works Department since 5 days.
+                            </div>
+                        </div>
+                        <!-- Complain button — current step, delayed -->
+                        <button class="complain-btn" onclick="openComplainModal('Amit Verma', 'Field Officer, PWD', '2 Days', 'contact4')">
+                            🚨 File a Complaint Against This Delay
+                        </button>
+                        <!-- Officer contact — hidden until button click -->
+                        <div class="officer-contact" id="contact4">
+                            <div class="oc-title">📍 Responsible Officer — Contact Details</div>
+                            <div class="oc-row">
+                                <div class="oc-icon oc-icon-phone">🏢</div>
+                                <span class="oc-label">Office No.</span>
+                                <span class="oc-value"><a href="tel:+911122334466">+91-11-2233-4466</a></span>
+                            </div>
+                            <div class="oc-row">
+                                <div class="oc-icon oc-icon-email">✉️</div>
+                                <span class="oc-label">Email</span>
+                                <span class="oc-value"><a href="/cdn-cgi/l/email-protection#accdc1c5d8dac9dec1cdecdcdbc882cbc3da82c5c2"><span class="__cf_email__" data-cfemail="4f2e22263b392a3d222e0f3f382b61282039612621">[email&#160;protected]</span></a></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="goBack()">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to Complaint Details
+                </button>
+                <button class="btn btn-secondary" onclick="escalateComplaint()">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                    </svg>
+                    Escalate This Delay
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complain Modal -->
+    <div class="modal-overlay" id="complainModal">
+        <div class="modal">
+            <div class="modal-title">🚨 File a Delay Complaint</div>
+            <div class="modal-sub">
+                Officer: <strong>Amit Verma</strong> &nbsp;|&nbsp; Overdue by: <strong>2 Days</strong>
+            </div>
+            <textarea id="complainText" placeholder="Describe the issue or reason for your complaint... (optional)"></textarea>
+            <div class="modal-actions">
+                <button class="modal-submit" onclick="submitComplain()">Submit Complaint</button>
+                <button class="modal-cancel" onclick="closeComplainModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        function loadComplaintData() {
+            const str = localStorage.getItem('currentComplaint');
+            if (!str) return;
+            try {
+                const d = JSON.parse(str);
+                document.getElementById('complaintId').textContent = d.displayId    || 'CCTS-2026-01567';
+                document.getElementById('category').textContent    = d.categoryFull || 'Road & Infrastructure';
+                document.getElementById('location').textContent    = d.location     || 'Main Road, Village XYZ';
+                document.getElementById('submittedOn').textContent = d.submittedOn  || '15 Feb 2026, 3:42 PM';
+                document.getElementById('timeElapsed').textContent = d.timeElapsed  || '5 Days Pending';
+            } catch(e) { console.error(e); }
+        }
+
+        let activeContactId = null;
+
+        function openComplainModal(officerName, officerRole, overdue, contactId) {
+            document.querySelector('.modal-sub').innerHTML =
+                'Officer: <strong>' + officerName + '</strong> &nbsp;|&nbsp; ' +
+                'Role: <strong>' + officerRole + '</strong> &nbsp;|&nbsp; ' +
+                'Overdue by: <strong>' + overdue + '</strong>';
+            document.querySelector('.modal-title').dataset.officer = officerName;
+            document.getElementById('complainModal').classList.add('open');
+            document.getElementById('complainText').value = '';
+            // Show contact only for the step whose button was clicked
+            if (activeContactId && activeContactId !== contactId) {
+                document.getElementById(activeContactId).classList.remove('visible');
+            }
+            activeContactId = contactId;
+            document.getElementById(contactId).classList.add('visible');
+        }
+
+        function closeComplainModal() {
+            document.getElementById('complainModal').classList.remove('open');
+        }
+
+        function submitComplain() {
+            const officer = document.querySelector('.modal-title').dataset.officer || 'the officer';
+            closeComplainModal();
+            alert('✅ Complaint Submitted!\n\nYour delay complaint against ' + officer + ' has been registered.\nA senior officer will review this within 24 hours.\nYou will be notified via SMS and email.');
+        }
+
+        document.getElementById('complainModal').addEventListener('click', function(e) {
+            if (e.target === this) closeComplainModal();
+        });
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function escalateComplaint() {
+            alert('⚠️ Escalation Submitted!\n\nThis complaint has been escalated to the senior authority.\nYou will receive an acknowledgement within 2 hours via SMS and email.');
+        }
+
+        loadComplaintData();
+    </script>
+</body>
+</html>

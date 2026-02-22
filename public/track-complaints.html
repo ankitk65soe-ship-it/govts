@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Your Complaints - Public Service Grievance Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, #4a7ba7 0%, #3d6a94 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .header-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: white;
+            color: #4a7ba7;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-btn:hover {
+            background: #f0f4f8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Description Section */
+        .description {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            color: #333;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .filter-title-section {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .filter-main-title {
+            color: #1e3a5f;
+            font-size: 1.3rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.05rem;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            color: #555;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .filter-select {
+            padding: 10px 35px 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            color: #333;
+            background: white;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            min-width: 130px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #4a7ba7;
+        }
+
+        /* Search Section */
+        .search-section {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .search-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-type-selector {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #4a7ba7;
+        }
+
+        .radio-option span {
+            user-select: none;
+        }
+
+        .search-input-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .divider-text {
+            text-align: center;
+            position: relative;
+            margin: 30px 0 25px 0;
+        }
+
+        .divider-text::before,
+        .divider-text::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 47%;
+            height: 2px;
+            background: #cbd5e1;
+        }
+
+        .divider-text::before {
+            left: 0;
+        }
+
+        .divider-text::after {
+            right: 0;
+        }
+
+        .divider-text span {
+            background: white;
+            padding: 0 20px;
+            color: #475569;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .filter-option-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            position: relative;
+        }
+
+        .filter-option-card:hover {
+            border-color: #4a7ba7;
+            box-shadow: 0 4px 12px rgba(74, 123, 167, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .filter-option-card input[type="radio"] {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #4a7ba7;
+        }
+
+        .filter-option-card input[type="radio"]:checked ~ .option-content {
+            color: #4a7ba7;
+        }
+
+        .filter-option-card:has(input[type="radio"]:checked) {
+            border-color: #4a7ba7;
+            background: #f0f7ff;
+        }
+
+        .option-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .option-icon {
+            width: 40px;
+            height: 40px;
+            color: #4a7ba7;
+            flex-shrink: 0;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        .option-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e3a5f;
+            margin-bottom: 5px;
+        }
+
+        .option-desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        .detailed-filter {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-apply-inline {
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #4a7ba7 0%, #3d6a94 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(74, 123, 167, 0.3);
+            height: fit-content;
+            align-self: flex-end;
+        }
+
+        .btn-apply-inline:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(74, 123, 167, 0.4);
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-apply-filter {
+            padding: 12px 35px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-apply-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(34, 197, 94, 0.4);
+        }
+
+        .btn-clear-filter {
+            padding: 12px 35px;
+            background: white;
+            color: #6c757d;
+            border: 2px solid #6c757d;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-clear-filter:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+        .search-label {
+            color: #333;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4a7ba7;
+        }
+
+        .btn-search {
+            padding: 12px 40px;
+            background: linear-gradient(135deg, #4a7ba7 0%, #3d6a94 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(74, 123, 167, 0.3);
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(74, 123, 167, 0.4);
+        }
+
+        /* Table Section */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8f9fa;
+        }
+
+        th {
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95rem;
+            text-transform: capitalize;
+            border-bottom: 2px solid #e0e0e0;
+            white-space: nowrap;
+        }
+
+        th.sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-right: 30px;
+        }
+
+        th.sortable::after {
+            content: '⌃';
+            position: absolute;
+            right: 10px;
+            opacity: 0.4;
+            font-size: 0.9rem;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        td {
+            padding: 18px 20px;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        /* Info Message */
+        .info-message {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .info-icon {
+            width: 24px;
+            height: 24px;
+            background: #2196f3;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .info-text {
+            color: #1565c0;
+            font-size: 0.95rem;
+        }
+
+        /* Action Button */
+        .btn-action {
+            padding: 8px 20px;
+            background: #4a7ba7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            background: #3d6a94;
+            transform: translateY(-1px);
+        }
+
+        .btn-cancel-row {
+            padding: 8px 16px;
+            background: #fff0f0;
+            color: #dc2626;
+            border: 1.5px solid #fecaca;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-cancel-row:hover {
+            background: #dc2626;
+            color: white;
+            border-color: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .action-cell {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* Cancel Modal */
+        .cancel-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .cancel-modal-overlay.active { display: flex; }
+        .cancel-modal {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            max-width: 480px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .cancel-modal-header {
+            background: #fef2f2;
+            border-bottom: 2px solid #fecaca;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .cancel-modal-header-icon {
+            width: 38px;
+            height: 38px;
+            background: #dc2626;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .cancel-modal-header-icon svg { width: 20px; height: 20px; fill: white; }
+        .cancel-modal-title { font-size: 1.1rem; font-weight: 700; color: #7f1d1d; margin: 0; }
+        .cancel-modal-subtitle { font-size: 0.82rem; color: #991b1b; margin: 2px 0 0; }
+        .cancel-modal-body { padding: 22px 24px; }
+        .cancel-modal-warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            color: #92400e;
+            margin-bottom: 18px;
+        }
+        .cancel-modal-complaint-id {
+            background: #f1f5f9;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            color: #1e293b;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .cancel-modal-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1e3a5f;
+            margin-bottom: 7px;
+        }
+        .cancel-modal-label .req { color: #ef4444; }
+        .cancel-modal-select, .cancel-modal-textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            color: #334155;
+            font-family: inherit;
+            margin-bottom: 14px;
+            transition: border-color 0.2s;
+        }
+        .cancel-modal-select { appearance: none; background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E") no-repeat right 12px center; cursor: pointer; }
+        .cancel-modal-select:focus, .cancel-modal-textarea:focus { outline: none; border-color: #dc2626; }
+        .cancel-modal-textarea { min-height: 100px; resize: vertical; }
+        .cancel-char-count { text-align: right; font-size: 0.8rem; color: #94a3b8; margin-top: -10px; margin-bottom: 14px; }
+        .cancel-modal-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.88rem;
+            color: #475569;
+            margin-bottom: 0;
+        }
+        .cancel-modal-checkbox input { margin-top: 2px; accent-color: #dc2626; flex-shrink: 0; }
+        .cancel-modal-footer {
+            display: flex;
+            gap: 10px;
+            padding: 0 24px 22px;
+        }
+        .cancel-modal-btn {
+            flex: 1;
+            padding: 11px 18px;
+            border: none;
+            border-radius: 7px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cancel-modal-btn-secondary { background: #f1f5f9; color: #475569; border: 2px solid #e2e8f0; }
+        .cancel-modal-btn-secondary:hover { background: #e2e8f0; }
+        .cancel-modal-btn-danger { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; box-shadow: 0 4px 10px rgba(220,38,38,0.3); }
+        .cancel-modal-btn-danger:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(220,38,38,0.4); }
+        .cancel-modal-btn-danger:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+        /* Bottom Buttons */
+        .bottom-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn-refresh {
+            padding: 14px 35px;
+            background: linear-gradient(135deg, #4a7ba7 0%, #3d6a94 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(74, 123, 167, 0.3);
+        }
+
+        .btn-refresh:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(74, 123, 167, 0.4);
+        }
+
+        .btn-dashboard {
+            padding: 14px 35px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-dashboard:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(108, 117, 125, 0.4);
+        }
+
+        .refresh-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-submitted {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-in-progress {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-resolved {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .status-closed {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .filter-main-title {
+                font-size: 1.1rem;
+            }
+
+            .filter-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+
+            .search-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-type-selector {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .filter-options {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-option-card {
+                padding: 15px;
+            }
+
+            .option-icon {
+                width: 35px;
+                height: 35px;
+            }
+
+            .search-input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .quick-actions {
+                width: 100%;
+            }
+
+            .btn-apply-filter,
+            .btn-clear-filter {
+                width: 100%;
+            }
+
+            .filter-row {
+                gap: 15px;
+            }
+
+            .btn-apply-inline {
+                width: 100%;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .btn-search {
+                width: 100%;
+            }
+
+            .bottom-buttons {
+                flex-direction: column;
+            }
+
+            .btn-refresh,
+            .btn-dashboard {
+                width: 100%;
+                justify-content: center;
+            }
+
+            th, td {
+                padding: 12px 10px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <button class="header-btn" onclick="viewDepartmentPerformance()">View Department Performance</button>
+        <button class="header-btn" style="right:1180px;" onclick="openTrackAI()">
+            🎙️ Track by AI
+        </button>
+        <h1>Track Your Complaints</h1>
+        
+    </div>
+
+
+    <!-- AI Track Box -->
+    <div id="trackAIBox" style="display:none; background:white; padding:20px; margin:20px auto; max-width:600px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); text-align:center;">
+
+        <h3 style="margin-bottom:15px; color:#1e3a5f;">🎙️ Track Complaint by Voice</h3>
+
+        <p id="trackAIStatus" style="margin-bottom:15px; font-weight:600; color:#4a7ba7;">
+            Click Speak and say:
+            <br>
+            "Track CMP123456"
+            <br>
+            or
+            <br>
+            "Show my recent complaints"
+        </p>
+
+        <button onclick="startTrackVoice()" 
+            style="padding:10px 25px; background:#4a7ba7; color:white; border:none; border-radius:6px; cursor:pointer;">
+            🎙️ Speak
+        </button>
+
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Description -->
+        <div class="description">
+            View all your submitted complaints. Use the filters below to search by department, date, status, or complaint ID. Your complaints are automatically linked to your account. Click on any complaint to see full details.
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <!-- Filter Title -->
+            <div class="filter-title-section">
+                <h3 class="filter-main-title">Improving Feedback, Complaint Tracking, and Transparency in Local Public Services</h3>
+            </div>
+
+            <!-- Filter Options Cards -->
+            <div class="filter-options">
+                <label class="filter-option-card" onclick="selectFilter('yearMonth')">
+                    <input type="radio" name="filterType" value="yearMonth">
+                    <div class="option-content">
+                        <svg class="option-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                        </svg>
+                        <div class="option-text">
+                            <div class="option-title">By Year & Month</div>
+                            <div class="option-desc">Filter complaints by specific time period</div>
+                        </div>
+                    </div>
+                </label>
+
+                <label class="filter-option-card" onclick="selectFilter('department')">
+                    <input type="radio" name="filterType" value="department">
+                    <div class="option-content">
+                        <svg class="option-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/>
+                        </svg>
+                        <div class="option-text">
+                            <div class="option-title">By Department</div>
+                            <div class="option-desc">View complaints by specific department</div>
+                        </div>
+                    </div>
+                </label>
+
+                <label class="filter-option-card" onclick="selectFilter('recent')">
+                    <input type="radio" name="filterType" value="recent">
+                    <div class="option-content">
+                        <svg class="option-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        <div class="option-text">
+                            <div class="option-title">Recent</div>
+                            <div class="option-desc">Last 60 days complaints</div>
+                        </div>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Year & Month Filter (Hidden by default) -->
+            <div class="detailed-filter" id="yearMonthFilter" style="display: none;">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label>Year:</label>
+                        <select class="filter-select" id="yearFilter">
+                            <option value="2026" selected>2026</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Month:</label>
+                        <select class="filter-select" id="monthFilter">
+                            <option value="all">All Months</option>
+                            <option value="February" selected>February</option>
+                            <option value="January">January</option>
+                            <option value="December">December</option>
+                            <option value="November">November</option>
+                            <option value="October">October</option>
+                            <option value="September">September</option>
+                            <option value="August">August</option>
+                            <option value="July">July</option>
+                            <option value="June">June</option>
+                            <option value="May">May</option>
+                            <option value="April">April</option>
+                            <option value="March">March</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Status:</label>
+                        <select class="filter-select" id="statusFilterYM">
+                            <option value="all">All Status</option>
+                            <option value="submitted">Submitted</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-apply-inline" onclick="applyYearMonthFilter()">Apply</button>
+                </div>
+            </div>
+
+            <!-- Department Filter (Hidden by default) -->
+            <div class="detailed-filter" id="departmentFilter" style="display: none;">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label>Department:</label>
+                        <select class="filter-select" id="departmentSelect">
+                            <option value="Public Works">Public Works</option>
+                            <option value="Water Supply">Water Supply</option>
+                            <option value="Electricity">Electricity</option>
+                            <option value="Road Safety">Road Safety</option>
+                            <option value="Sanitation">Sanitation</option>
+                            <option value="Health">Health</option>
+                            <option value="Education">Education</option>
+                            <option value="Transportation">Transportation</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Status:</label>
+                        <select class="filter-select" id="statusFilterDept">
+                            <option value="all">All Status</option>
+                            <option value="submitted">Submitted</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-apply-inline" onclick="applyDepartmentFilter()">Apply</button>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="divider-text">
+                <span>OR</span>
+            </div>
+
+            <!-- Complaint ID Search -->
+            <div class="search-section">
+                <div class="search-header">
+                    <span class="search-label">Search by Complaint ID:</span>
+                </div>
+                
+                <div class="search-input-group">
+                    <input type="text" class="search-input" id="complaintSearch" placeholder="Enter complaint ID (e.g., CMP123456)">
+                    <button class="btn-search" onclick="searchByComplaintId()">Search</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Message -->
+        <div class="info-message">
+            <div class="info-icon">i</div>
+            <div class="info-text">No complaints to display. Use the filters or try a different search criteria.</div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+            <div class="table-wrapper">
+                <table id="complaintsTable">
+                    <thead>
+                        <tr>
+                            <th>Complaint ID</th>
+                            <th class="sortable" onclick="sortTable(1)">Category</th>
+                            <th class="sortable" onclick="sortTable(2)">Submitted Date</th>
+                            <th class="sortable" onclick="sortTable(3)">Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="complaintsBody">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Duplicate Table for reference -->
+        <div class="table-container">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Complaint ID</th>
+                            <th class="sortable">Category</th>
+                            <th class="sortable">Submitted Date</th>
+                            <th class="sortable">Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Empty -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Bottom Buttons -->
+        <div class="bottom-buttons">
+            <button class="btn-refresh" onclick="refreshList()">
+                <svg class="refresh-icon" viewBox="0 0 24 24">
+                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                </svg>
+                Refresh List
+            </button>
+            <button class="btn-dashboard" onclick="goToDashboard()">Go to Dashboard</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for demonstration - In real app, this would come from backend based on logged-in user
+        const sampleComplaints = [
+            {
+                id: 'CMP123456',
+                category: 'Infrastructure',
+                department: 'Public Works',
+                date: '2026-02-10',
+                status: 'submitted',
+                mobile: '9876543210',
+                fullDetails: {
+                    displayId: 'CCTS-2026-01567',
+                    categoryFull: 'Road & Infrastructure',
+                    departmentFull: 'Public Works Department',
+                    submittedOn: '10 February 2026 – 3:42 PM',
+                    location: 'Main Road, Village XYZ',
+                    title: 'Potholes on Main Road',
+                    description: 'There are multiple deep potholes on Main Road near the village market. These potholes are causing accidents and damage to vehicles. The situation worsens during rain.',
+                    statusFull: 'Submitted',
+                    lastUpdated: '10 February 2026 – 3:42 PM',
+                    timeElapsed: '5 Days 18 Hours',
+                    expectedResolution: 'By 17 February 2026',
+                    actionTaken: 'Your complaint has been registered and forwarded to the Public Works Department for review.',
+                    officerName: 'Rajesh Kumar',
+                    recommendedSeverity: 'normal'
+                }
+            },
+            {
+                id: 'CMP123457',
+                category: 'Water Supply',
+                department: 'Water Supply',
+                date: '2026-02-08',
+                status: 'in-progress',
+                mobile: '9876543210',
+                fullDetails: {
+                    displayId: 'CCTS-2026-01568',
+                    categoryFull: 'Water Supply & Sanitation',
+                    departmentFull: 'Water Supply Department',
+                    submittedOn: '8 February 2026 – 10:15 AM',
+                    location: 'Sector 5, Block A',
+                    title: 'No water supply for 3 days',
+                    description: 'Our locality has been facing severe water shortage for the past 3 days. No water is being supplied through the main pipeline. This is causing major inconvenience to residents.',
+                    statusFull: 'In Progress',
+                    lastUpdated: '12 February 2026 – 2:00 PM',
+                    timeElapsed: '7 Days 8 Hours',
+                    expectedResolution: 'By 15 February 2026',
+                    actionTaken: 'Repair work in progress. Pipeline leak has been identified. Water tankers have been deployed to the affected area.',
+                    officerName: 'Priya Sharma',
+                    recommendedSeverity: 'serious'
+                }
+            },
+            {
+                id: 'CMP123458',
+                category: 'Electricity',
+                department: 'Electricity',
+                date: '2026-02-05',
+                status: 'resolved',
+                mobile: '9876543210',
+                fullDetails: {
+                    displayId: 'CCTS-2026-01569',
+                    categoryFull: 'Electricity & Power',
+                    departmentFull: 'Electricity Department',
+                    submittedOn: '5 February 2026 – 6:30 PM',
+                    location: 'Green Park Colony, Street 12',
+                    title: 'Frequent power cuts',
+                    description: 'Our area is experiencing frequent power cuts throughout the day. Power goes off every 2-3 hours for 30-40 minutes. This has been happening for the last week.',
+                    statusFull: 'Resolved',
+                    lastUpdated: '10 February 2026 – 4:45 PM',
+                    timeElapsed: '5 Days 22 Hours',
+                    expectedResolution: 'By 9 February 2026',
+                    actionTaken: 'Faulty transformer has been replaced with a new one. Power supply has been stabilized. Issue resolved.',
+                    officerName: 'Amit Verma',
+                    recommendedSeverity: 'normal'
+                }
+            },
+            {
+                id: 'CMP123459',
+                category: 'Road Safety',
+                department: 'Road Safety',
+                date: '2026-01-28',
+                status: 'closed',
+                mobile: '9876543210',
+                fullDetails: {
+                    displayId: 'CCTS-2026-01465',
+                    categoryFull: 'Road Safety & Traffic',
+                    departmentFull: 'Road Safety Department',
+                    submittedOn: '28 January 2026 – 11:20 AM',
+                    location: 'Highway Junction, Near School',
+                    title: 'Missing speed breakers near school',
+                    description: 'The speed breakers near ABC School on the highway have been damaged and removed. Vehicles are speeding past the school zone creating a dangerous situation for children.',
+                    statusFull: 'Closed',
+                    lastUpdated: '5 February 2026 – 3:15 PM',
+                    timeElapsed: '8 Days 4 Hours',
+                    expectedResolution: 'By 4 February 2026',
+                    actionTaken: 'New speed breakers have been installed. Additional warning signage has been placed. Issue resolved and closed.',
+                    officerName: 'Suresh Reddy',
+                    recommendedSeverity: 'emergency'
+                }
+            },
+            {
+                id: 'CMP123460',
+                category: 'Sanitation',
+                department: 'Sanitation',
+                date: '2026-01-15',
+                status: 'resolved',
+                mobile: '9876543210',
+                fullDetails: {
+                    displayId: 'CCTS-2026-01234',
+                    categoryFull: 'Sanitation & Waste Management',
+                    departmentFull: 'Sanitation Department',
+                    submittedOn: '15 January 2026 – 9:00 AM',
+                    location: 'Park Avenue, Sector 7',
+                    title: 'Garbage not collected for 2 weeks',
+                    description: 'Garbage has not been collected from our street for the past 2 weeks. The waste is piling up and creating unhygienic conditions. Foul smell is affecting residents.',
+                    statusFull: 'Resolved',
+                    lastUpdated: '22 January 2026 – 11:30 AM',
+                    timeElapsed: '7 Days 2 Hours',
+                    expectedResolution: 'By 20 January 2026',
+                    actionTaken: 'Garbage collection has been resumed. Additional cleanup drive conducted. Regular collection schedule restored.',
+                    officerName: 'Meena Iyer',
+                    recommendedSeverity: 'serious'
+                }
+            }
+        ];
+
+        // Load complaints from localStorage (submitted by users) and merge with sample data
+        function loadAllComplaints() {
+            const storedComplaints = JSON.parse(localStorage.getItem('allComplaints') || '[]');
+            const cancelledIds = JSON.parse(localStorage.getItem('cancelledComplaintIds') || '[]');
+            const all = [...storedComplaints, ...sampleComplaints];
+            return all.filter(c => !cancelledIds.includes(c.id));
+        }
+
+        let allComplaints = loadAllComplaints();
+        // Simulated logged-in user mobile number
+        const loggedInUserMobile = '9876543210';
+        
+        // Reload complaints when page loads (in case new ones were added)
+        window.addEventListener('DOMContentLoaded', function() {
+            allComplaints = loadAllComplaints();
+            // Auto-show all complaints on page load
+            const filtered = allComplaints.filter(c => c.mobile === loggedInUserMobile);
+            renderComplaints(filtered);
+        });
+
+        function selectFilter(filterType) {
+            // Hide all detailed filters first
+            document.getElementById('yearMonthFilter').style.display = 'none';
+            document.getElementById('departmentFilter').style.display = 'none';
+            
+            // Show the selected filter
+            if (filterType === 'yearMonth') {
+                document.getElementById('yearMonthFilter').style.display = 'block';
+            } else if (filterType === 'department') {
+                document.getElementById('departmentFilter').style.display = 'block';
+            } else if (filterType === 'recent') {
+                // Automatically apply recent filter
+                applyRecentFilter();
+            }
+        }
+
+        function getStatusBadge(status) {
+            const statusMap = {
+                'submitted': 'Submitted',
+                'in-progress': 'In Progress',
+                'resolved': 'Resolved',
+                'closed': 'Closed'
+            };
+            return `<span class="status-badge status-${status}">${statusMap[status]}</span>`;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function renderComplaints(complaints) {
+            const tbody = document.getElementById('complaintsBody');
+            const infoMessage = document.querySelector('.info-message');
+            
+            if (complaints.length === 0) {
+                tbody.innerHTML = '';
+                infoMessage.style.display = 'flex';
+                infoMessage.querySelector('.info-text').textContent = 'No complaints to display. Try adjusting your search criteria.';
+            } else {
+                infoMessage.style.display = 'none';
+                tbody.innerHTML = complaints.map(complaint => `
+                    <tr>
+                        <td><strong>${complaint.id}</strong></td>
+                        <td>${complaint.category}</td>
+                        <td>${formatDate(complaint.date)}</td>
+                        <td>${getStatusBadge(complaint.status)}</td>
+                        <td>
+                            <div class="action-cell">
+                                <button class="btn-action" onclick="viewComplaint('${complaint.id}')">View</button>
+                                <button class="btn-cancel-row" onclick="openCancelModal('${complaint.id}')">Cancel</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function searchByComplaintId() {
+            const complaintId = document.getElementById('complaintSearch').value.trim().toUpperCase();
+            
+            if (!complaintId) {
+                alert('Please enter a complaint ID');
+                return;
+            }
+            
+            // Search for specific complaint ID for logged-in user
+            const filtered = allComplaints.filter(c => 
+                c.mobile === loggedInUserMobile && c.id.toUpperCase() === complaintId
+            );
+            
+            if (filtered.length === 0) {
+                const infoMessage = document.querySelector('.info-message');
+                infoMessage.style.display = 'flex';
+                infoMessage.querySelector('.info-text').textContent = `Complaint ID "${complaintId}" not found in your complaints.`;
+                document.getElementById('complaintsBody').innerHTML = '';
+            } else {
+                renderComplaints(filtered);
+            }
+        }
+
+        function applyYearMonthFilter() {
+            const year = document.getElementById('yearFilter').value;
+            const month = document.getElementById('monthFilter').value;
+            const status = document.getElementById('statusFilterYM').value;
+
+            // Start with all complaints for logged-in user
+            let filtered = allComplaints.filter(c => c.mobile === loggedInUserMobile);
+
+            // Filter by year
+            filtered = filtered.filter(c => c.date.startsWith(year));
+
+            // Filter by month
+            if (month !== 'all') {
+                const monthMap = {
+                    'January': '01', 'February': '02', 'March': '03', 'April': '04',
+                    'May': '05', 'June': '06', 'July': '07', 'August': '08',
+                    'September': '09', 'October': '10', 'November': '11', 'December': '12'
+                };
+                filtered = filtered.filter(c => c.date.includes(`-${monthMap[month]}-`));
+            }
+
+            // Filter by status
+            if (status !== 'all') {
+                filtered = filtered.filter(c => c.status === status);
+            }
+
+            renderComplaints(filtered);
+        }
+
+        function applyDepartmentFilter() {
+            const department = document.getElementById('departmentSelect').value;
+            const status = document.getElementById('statusFilterDept').value;
+
+            // Start with all complaints for logged-in user
+            let filtered = allComplaints.filter(c => c.mobile === loggedInUserMobile);
+
+            // Filter by department
+            filtered = filtered.filter(c => c.department === department);
+
+            // Filter by status
+            if (status !== 'all') {
+                filtered = filtered.filter(c => c.status === status);
+            }
+
+            renderComplaints(filtered);
+        }
+
+        function applyRecentFilter() {
+            // Filter complaints from last 60 days
+            const sixtyDaysAgo = new Date();
+            sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+            
+            const filtered = allComplaints.filter(c => {
+                if (c.mobile !== loggedInUserMobile) return false;
+                const complaintDate = new Date(c.date);
+                return complaintDate >= sixtyDaysAgo;
+            });
+
+            renderComplaints(filtered);
+        }
+
+        function sortTable(columnIndex) {
+            // Sorting functionality can be implemented here
+            console.log('Sorting column:', columnIndex);
+        }
+
+        function viewComplaint(complaintId) {
+            // Find the complaint data
+            const complaint = allComplaints.find(c => c.id === complaintId);
+            
+            if (complaint && complaint.fullDetails) {
+                // Save complaint details to localStorage
+                localStorage.setItem('currentComplaint', JSON.stringify(complaint.fullDetails));
+                localStorage.setItem('currentComplaintId', complaintId);
+                
+                // Redirect to complaint detail page
+                window.location.href = `complaint-details.html?id=${complaintId}`;
+            } else {
+                alert('Complaint details not found');
+            }
+        }
+
+        function refreshList() {
+            // Reload complaints from localStorage
+            allComplaints = loadAllComplaints();
+            
+            // Clear complaint ID search
+            document.getElementById('complaintSearch').value = '';
+            
+            // Uncheck all filter options
+            const filterRadios = document.querySelectorAll('input[name="filterType"]');
+            filterRadios.forEach(radio => radio.checked = false);
+            
+            // Hide all detailed filters
+            document.getElementById('yearMonthFilter').style.display = 'none';
+            document.getElementById('departmentFilter').style.display = 'none';
+            
+            // Show all complaints for logged-in user
+            const filtered = allComplaints.filter(c => c.mobile === loggedInUserMobile);
+            renderComplaints(filtered);
+        }
+
+        function goToDashboard() {
+            window.location.href = 'dashboard.html';
+        }
+
+        function viewDepartmentPerformance() {
+            // Redirect to department performance page
+            window.location.href = 'department-performance.html';
+        }
+
+        // Load page - show all complaints on load
+        window.addEventListener('DOMContentLoaded', function() {
+            allComplaints = loadAllComplaints();
+            const filtered = allComplaints.filter(c => c.mobile === loggedInUserMobile);
+            renderComplaints(filtered);
+        });
+
+        // Add Enter key support for complaint ID search
+        document.getElementById('complaintSearch').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchByComplaintId();
+            }
+        });
+    </script>
+    <!-- Cancel Complaint Modal -->
+    <div class="cancel-modal-overlay" id="cancelModalOverlay">
+        <div class="cancel-modal">
+            <div class="cancel-modal-header">
+                <div class="cancel-modal-header-icon">
+                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </div>
+                <div>
+                    <h2 class="cancel-modal-title">Cancel Complaint</h2>
+                    <p class="cancel-modal-subtitle">This action cannot be undone</p>
+                </div>
+            </div>
+            <div class="cancel-modal-body">
+                <div class="cancel-modal-warning">
+                    ⚠️ Once cancelled, this complaint will be closed and no further action will be taken by the department.
+                </div>
+                <div class="cancel-modal-complaint-id">
+                    Complaint ID: <span id="cancelTargetId">—</span>
+                </div>
+
+                <label class="cancel-modal-label">Reason for Cancellation <span class="req">*</span></label>
+                <select class="cancel-modal-select" id="cancelReason" onchange="validateCancelForm()">
+                    <option value="">-- Select a reason --</option>
+                    <option value="issue_resolved">Issue has been resolved on its own</option>
+                    <option value="wrong_complaint">Complaint was filed by mistake / wrong details</option>
+                    <option value="duplicate">Duplicate complaint already submitted</option>
+                    <option value="no_longer_needed">No longer need action on this</option>
+                    <option value="resolved_privately">Issue resolved privately / directly with department</option>
+                    <option value="other">Other reason</option>
+                </select>
+
+                <label class="cancel-modal-label">Additional Details <span class="req">*</span></label>
+                <textarea class="cancel-modal-textarea" id="cancelDetails" placeholder="Please describe your reason for cancellation in detail..." maxlength="300" oninput="updateCancelCharCount(); validateCancelForm()"></textarea>
+                <div class="cancel-char-count" id="cancelCharCount">0 / 300 characters</div>
+
+                <label class="cancel-modal-checkbox">
+                    <input type="checkbox" id="cancelConfirm" onchange="validateCancelForm()">
+                    <span>I understand that cancelling this complaint is permanent and the department will stop working on this issue.</span>
+                </label>
+            </div>
+            <div class="cancel-modal-footer">
+                <button class="cancel-modal-btn cancel-modal-btn-secondary" onclick="closeCancelModal()">Go Back</button>
+                <button class="cancel-modal-btn cancel-modal-btn-danger" id="confirmCancelBtn" onclick="submitCancellation()" disabled>Confirm Cancellation</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cancelTargetComplaintId = null;
+
+        function openCancelModal(complaintId) {
+            cancelTargetComplaintId = complaintId;
+            document.getElementById('cancelTargetId').textContent = complaintId;
+            // Reset form
+            document.getElementById('cancelReason').value = '';
+            document.getElementById('cancelDetails').value = '';
+            document.getElementById('cancelConfirm').checked = false;
+            document.getElementById('cancelCharCount').textContent = '0 / 300 characters';
+            document.getElementById('confirmCancelBtn').disabled = true;
+            document.getElementById('cancelModalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancelModalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+            cancelTargetComplaintId = null;
+        }
+
+        function updateCancelCharCount() {
+            const val = document.getElementById('cancelDetails').value.length;
+            const el  = document.getElementById('cancelCharCount');
+            el.textContent = `${val} / 300 characters`;
+            el.style.color = val > 260 ? '#ef4444' : '#94a3b8';
+        }
+
+        function validateCancelForm() {
+            const reason    = document.getElementById('cancelReason').value;
+            const details   = document.getElementById('cancelDetails').value.trim();
+            const confirmed = document.getElementById('cancelConfirm').checked;
+            document.getElementById('confirmCancelBtn').disabled = !(reason && details.length >= 10 && confirmed);
+        }
+
+        function submitCancellation() {
+            const reason     = document.getElementById('cancelReason');
+            const details    = document.getElementById('cancelDetails').value.trim();
+            const reasonText = reason.options[reason.selectedIndex].text;
+
+            // Save cancellation record
+            localStorage.setItem('cancelledComplaint', JSON.stringify({
+                complaintId: cancelTargetComplaintId,
+                reason: reasonText,
+                details,
+                cancelledAt: new Date().toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })
+            }));
+
+            // Track cancelled IDs (covers both stored and sample complaints)
+            const cancelledIds = JSON.parse(localStorage.getItem('cancelledComplaintIds') || '[]');
+            if (!cancelledIds.includes(cancelTargetComplaintId)) {
+                cancelledIds.push(cancelTargetComplaintId);
+                localStorage.setItem('cancelledComplaintIds', JSON.stringify(cancelledIds));
+            }
+
+            // Also remove from allComplaints in localStorage if it exists there
+            const storedComplaints = JSON.parse(localStorage.getItem('allComplaints') || '[]');
+            const updated = storedComplaints.filter(c => c.id !== cancelTargetComplaintId);
+            localStorage.setItem('allComplaints', JSON.stringify(updated));
+
+            closeCancelModal();
+            // alert(`✅ Complaint ${cancelTargetComplaintId} has been cancelled.\n\nReason: ${reasonText}\n\nYou will receive a confirmation shortly.`);
+            refreshList();
+        }
+
+        // Close on overlay click
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('cancelModalOverlay').addEventListener('click', function(e) {
+                if (e.target === this) closeCancelModal();
+            });
+        });
+    </script>
+    <script>
+let recognitionAI;
+
+function openTrackAI(){
+    document.getElementById("trackAIBox").style.display = "block";
+}
+
+function startTrackVoice(){
+
+    recognitionAI = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognitionAI.lang = "hi-IN";  // change to hi-IN for Hindi
+
+    document.getElementById("trackAIStatus").innerText = "🎙️ Listening...";
+    recognitionAI.start();
+
+    recognitionAI.onresult = function(event){
+
+        const speechText = event.results[0][0].transcript.toLowerCase();
+        document.getElementById("trackAIStatus").innerText = "You said: " + speechText;
+
+        processTrackQuery(speechText);
+    };
+
+    recognitionAI.onerror = function(){
+        alert("Microphone not allowed or not working.");
+    };
+}
+
+function processTrackQuery(text){
+
+    // 🔎 1️⃣ Track by Complaint ID (CMP123456)
+    const idMatch = text.match(/cmp\d+/i);
+    if(idMatch){
+        document.getElementById("complaintSearch").value = idMatch[0].toUpperCase();
+        searchByComplaintId();
+        return;
+    }
+
+    // 🔎 2️⃣ Track by Department
+    if(text.includes("electric") || text.includes("bijli")){
+        selectFilter('department');
+        document.getElementById("departmentSelect").value = "Electricity";
+        applyDepartmentFilter();
+        return;
+    }
+
+    if(text.includes("water") || text.includes("pani")){
+        selectFilter('department');
+        document.getElementById("departmentSelect").value = "Water Supply";
+        applyDepartmentFilter();
+        return;
+    }
+
+    if(text.includes("road") || text.includes("sadak")){
+        selectFilter('department');
+        document.getElementById("departmentSelect").value = "Public Works";
+        applyDepartmentFilter();
+        return;
+    }
+
+    if(text.includes("sanitation") || text.includes("garbage") || text.includes("kachra")){
+        selectFilter('department');
+        document.getElementById("departmentSelect").value = "Sanitation";
+        applyDepartmentFilter();
+        return;
+    }
+
+    // 🔎 3️⃣ Recent complaints
+    if(text.includes("recent") || text.includes("latest") || text.includes("haal ka")){
+        applyRecentFilter();
+        return;
+    }
+
+    alert("Sorry, I could not understand. Say Complaint ID, Department or Recent.");
+}
+</script>
+</body>
+</html>
