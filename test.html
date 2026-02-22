@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Test AI Complaint</h2>
+
+<button onclick="testAI()">Test AI</button>
+
+<script>
+function testAI() {
+  fetch("http://localhost:5000/api/ai-complaint", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      complaint: "No water supply in my area for 3 days"
+    })
+  })
+  .then(res => res.json())
+  .then(data => alert(JSON.stringify(data, null, 2)))
+  .catch(err => alert("Error: " + err));
+}
+</script>
+
+</body>
+</html>
